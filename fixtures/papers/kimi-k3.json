@@ -1,0 +1,227 @@
+{
+  "schemaVersion": 1,
+  "source": {
+    "schemaVersion": 1,
+    "id": "kimi-k3-open-frontier-intelligence",
+    "canonicalTitle": "Kimi K3: Open Frontier Intelligence",
+    "canonicalUrl": "https://www.kimi.com/blog/kimi-k3",
+    "organization": "Moonshot AI",
+    "sourceName": "Kimi",
+    "sourceType": "FIRST_PARTY_TECHNICAL_LAUNCH_BLOG",
+    "publicationDate": "2026-07-21",
+    "primarySource": true,
+    "primaryLayer": "MODELS",
+    "secondaryLayers": [
+      "CHIPS_COMPUTE",
+      "CLOUD_INFRASTRUCTURE",
+      "APPLICATIONS"
+    ],
+    "technicalReportAvailable": false,
+    "technicalReportStatus": "ANNOUNCED_NOT_ATTACHED",
+    "accessLevel": "PUBLIC"
+  },
+  "artifactLabel": "Technical Launch Blog",
+  "introduction": "Today, we are introducing Kimi K3 — our most capable model. Kimi K3 is a 2.8T-parameter model built on our Kimi Delta Attention and Attention Residuals, with native vision capabilities and a 1-million-token context window.",
+  "logoPath": "/assets/kimi-k3/kimi-favicon.ico",
+  "report": {
+    "title": "Glyph No. 1: Kimi K3 launch analysis",
+    "assetPath": "/assets/kimi-k3/kimi-k3-launch-analysis.html",
+    "status": "PROVISIONAL_EDITORIAL_ANALYSIS",
+    "updatedDate": "2026-07-21",
+    "independentlyValidated": false,
+    "sourceBuildValidated": true
+  },
+  "document": {
+    "paperVersionId": "kimi-k3-attached-printout-2026-07-21",
+    "assetPath": "/assets/kimi-k3/kimi-k3-canonical-print.pdf",
+    "pageCount": 21,
+    "sha256": "b1d22e78cf9da8494f43bec4eb57a9146afdaf9460c0c6c157df4d2b4a2b1017",
+    "origin": "ATTACHED_SOURCE_PRINTOUT",
+    "attachedPrintoutAvailable": true
+  },
+  "technicalLabels": {
+    "architecture": [
+      { "label": "Kimi Delta Attention", "claimType": "AUTHOR_CLAIM" },
+      { "label": "Attention Residuals", "claimType": "AUTHOR_CLAIM" },
+      { "label": "Stable LatentMoE", "claimType": "AUTHOR_CLAIM" },
+      { "label": "Mixture of Experts", "claimType": "AUTHOR_CLAIM" },
+      { "label": "Gated MLA", "claimType": "AUTHOR_CLAIM" },
+      { "label": "Quantization-aware training", "claimType": "AUTHOR_CLAIM" },
+      { "label": "Expert parallelism", "claimType": "AUTHOR_CLAIM" },
+      { "label": "Prefill caching", "claimType": "AUTHOR_CLAIM" },
+      { "label": "Long-context inference", "claimType": "AUTHOR_CLAIM" }
+    ],
+    "capabilities": [
+      { "label": "Long-horizon coding", "claimType": "AUTHOR_CLAIM" },
+      { "label": "Knowledge work", "claimType": "AUTHOR_CLAIM" },
+      { "label": "Visual reasoning", "claimType": "AUTHOR_CLAIM" },
+      { "label": "Tool use", "claimType": "AUTHOR_CLAIM" },
+      { "label": "Scientific research", "claimType": "AUTHOR_CLAIM" },
+      { "label": "Multimodal creation", "claimType": "AUTHOR_CLAIM" }
+    ],
+    "resourceImplications": [
+      {
+        "label": "Model parameter scale increases",
+        "claimType": "GLYPH_INTERPRETATION"
+      },
+      {
+        "label": "Memory-capacity requirements may increase",
+        "claimType": "GLYPH_INTERPRETATION"
+      },
+      {
+        "label": "Interconnect requirements may increase",
+        "claimType": "GLYPH_INTERPRETATION"
+      },
+      {
+        "label": "Expert-routing complexity increases",
+        "claimType": "GLYPH_INTERPRETATION"
+      },
+      {
+        "label": "Prefix-cache behavior changes",
+        "claimType": "GLYPH_INTERPRETATION"
+      },
+      {
+        "label": "Claimed scaling efficiency improves",
+        "claimType": "AUTHOR_CLAIM"
+      }
+    ]
+  },
+  "concepts": [
+    "Mixture of Experts",
+    "Kimi Delta Attention",
+    "Long Context",
+    "Coding",
+    "Vision"
+  ],
+  "claims": [
+    {
+      "schemaVersion": 1,
+      "id": "claim-model-scale",
+      "reportId": "kimi-k3-worked-example",
+      "text": "Moonshot AI describes Kimi K3 as a 2.8T-parameter model with KDA, Attention Residuals, native vision, and a one-million-token context window.",
+      "kind": "AUTHOR_CLAIM",
+      "material": true,
+      "supportStatus": "SUPPORTED",
+      "evidenceSpanIds": ["evidence-model-scale"]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "claim-stable-latent-moe",
+      "reportId": "kimi-k3-worked-example",
+      "text": "Stable LatentMoE effectively activates 16 of 896 experts.",
+      "kind": "AUTHOR_CLAIM",
+      "material": true,
+      "supportStatus": "SUPPORTED",
+      "evidenceSpanIds": ["evidence-stable-latent-moe"]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "claim-scaling-efficiency",
+      "reportId": "kimi-k3-worked-example",
+      "text": "Moonshot AI claims an approximate 2.5× scaling-efficiency improvement over Kimi K2.",
+      "kind": "AUTHOR_CLAIM",
+      "material": true,
+      "supportStatus": "SUPPORTED",
+      "evidenceSpanIds": ["evidence-scaling-efficiency"]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "claim-architecture-diagram",
+      "reportId": "kimi-k3-worked-example",
+      "text": "The launch blog includes an architecture diagram covering Stable LatentMoE, KDA, Attention Residuals, and the block backbone.",
+      "kind": "PAPER_FACT",
+      "material": true,
+      "supportStatus": "SUPPORTED",
+      "evidenceSpanIds": ["evidence-architecture-diagram"]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "claim-kernel-optimization",
+      "reportId": "kimi-k3-worked-example",
+      "text": "In Moonshot AI's kernel-optimization evaluation, Kimi K3 was reported competitive with Fable 5 and ahead of three named models.",
+      "kind": "MEASURED_RESULT",
+      "material": true,
+      "supportStatus": "SUPPORTED",
+      "evidenceSpanIds": ["evidence-kernel-optimization"]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "claim-quantization",
+      "reportId": "kimi-k3-worked-example",
+      "text": "Kimi K3 applies quantization-aware training from the SFT stage using MXFP4 weights and MXFP8 activations.",
+      "kind": "AUTHOR_CLAIM",
+      "material": true,
+      "supportStatus": "SUPPORTED",
+      "evidenceSpanIds": ["evidence-quantization"]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "claim-supernode",
+      "reportId": "kimi-k3-worked-example",
+      "text": "Moonshot AI recommends supernode deployments with at least 64 accelerators.",
+      "kind": "AUTHOR_CLAIM",
+      "material": true,
+      "supportStatus": "SUPPORTED",
+      "evidenceSpanIds": ["evidence-supernode"]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "claim-prefill-cache",
+      "reportId": "kimi-k3-worked-example",
+      "text": "Moonshot AI says KDA prefill caching changes prefix-cache behavior and supports competitive token pricing.",
+      "kind": "AUTHOR_CLAIM",
+      "material": true,
+      "supportStatus": "SUPPORTED",
+      "evidenceSpanIds": ["evidence-prefill-cache"]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "claim-api-pricing",
+      "reportId": "kimi-k3-worked-example",
+      "text": "The launch blog lists Kimi K3 API prices for cache-hit input, cache-miss input, and output.",
+      "kind": "PAPER_FACT",
+      "material": true,
+      "supportStatus": "SUPPORTED",
+      "evidenceSpanIds": ["evidence-api-pricing"]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "claim-limitations",
+      "reportId": "kimi-k3-worked-example",
+      "text": "The source warns that incomplete thinking-history handoff can make generation quality unstable.",
+      "kind": "PAPER_FACT",
+      "material": true,
+      "supportStatus": "SUPPORTED",
+      "evidenceSpanIds": ["evidence-limitations"]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "claim-infrastructure-implication",
+      "reportId": "kimi-k3-worked-example",
+      "text": "Glyph interprets the model scale and deployment guidance as potentially increasing memory-capacity and interconnect requirements.",
+      "kind": "GLYPH_INTERPRETATION",
+      "material": true,
+      "supportStatus": "SUPPORTED",
+      "evidenceSpanIds": ["evidence-model-scale", "evidence-supernode"]
+    }
+  ],
+  "editorialLabels": {
+    "audienceRelevance": 5.0,
+    "frontierImportance": 5.0,
+    "novelty": 4.7,
+    "evidenceQuality": 3.2,
+    "timeliness": 5.0,
+    "investorRelevance": 4.6,
+    "technicalDifficulty": 4.8
+  },
+  "rankingInputs": {
+    "positiveSimilarity": 0.804,
+    "negativeSimilarity": 0.377,
+    "sourcePriority": 1.0,
+    "explorationValue": 0.8
+  },
+  "editorialRationale": "Major open frontier-model release combining new attention, residual-flow, MoE-routing, quantization, and long-context serving techniques. Potentially important across models, accelerators, memory, interconnect, and inference serving. Evidence remains predominantly first-party and the full technical report is still pending.",
+  "editorialDecision": "SELECT_FOR_REPORT",
+  "priority": "VERY_HIGH",
+  "mainUncertainty": "Whether the performance and scaling-efficiency claims persist under independent evaluation with matched hardware, harnesses, and inference conditions."
+}

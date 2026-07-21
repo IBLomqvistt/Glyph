@@ -1,0 +1,7 @@
+.DS_Store
+dist/
+node_modules/
+.pnpm-store/
+.env
+.env.local
+npm-debug.log*
