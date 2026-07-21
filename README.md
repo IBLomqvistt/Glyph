@@ -1,93 +1,190 @@
 # Glyph
 
-Glyph is a paper-intelligence prototype for turning frontier research into evidence-linked explanations and defensible AI-market context.
+**Frontier AI research for investors, with the evidence left attached.**
 
-> **Current status (2026-07-21): backend foundation, runnable product slice, and one real-source worked example.** The evidence-first domain, governed source API, editorial publication gates, idempotent worker, PostgreSQL schema, and local in-memory adapter are runnable. Eight responsive product views still use a conspicuously labelled synthetic paper; the separate Kimi K3 Models and Reader routes use an attached first-party printout and the supplied provisional Glyph launch analysis. Do not describe Glyph as submission-ready until the real example is human checked and the gates in [`submission/FINAL_CHECKLIST.md`](submission/FINAL_CHECKLIST.md) pass.
+Glyph is a paper-intelligence workspace that turns dense AI research into clear
+technical mechanisms, source-linked claims, and carefully bounded market
+context. It is designed for investors and technical decision-makers who need a
+fast explanation without losing the path back to the original source.
 
-## Product loop
+![Glyph landing experience](artifacts/actual-glyph-home.png)
 
-Scan frontier sources → rank 3–4 papers → select one → extract evidence → explain it progressively → connect defensible market implications → approve → publish → learn from feedback.
+## What Glyph does
 
-The product requirements and acceptance framework live in:
+Glyph follows an evidence-first editorial loop:
 
-- [`docs/PRD.md`](docs/PRD.md)
-- [`docs/PROJECT_STATUS.md`](docs/PROJECT_STATUS.md)
-- [`docs/TODO.md`](docs/TODO.md)
+1. scan approved frontier-research sources;
+2. classify and rank a small, explainable set of papers;
+3. let an editor choose the paper worth covering;
+4. extract claims, limitations, contradictions, and exact evidence spans;
+5. explain the work at progressive levels of depth;
+6. connect technical changes to sourced and timestamped market context;
+7. run integrity checks and require editorial approval before publication;
+8. learn from explicit reader feedback.
 
-## Running the product prototype
+The central rule is simple: a material claim must link to known evidence, or it
+must be marked as having insufficient evidence. Glyph is research tooling, not
+investment advice, and it does not generate trade recommendations.
 
-Requirements: Node.js 22+ and pnpm 11.9.
+## Try the current version
+
+### Requirements
+
+- Node.js 22 or newer
+- pnpm 11.9
+
+### Run the web experience
 
 ```bash
 pnpm install
 pnpm dev
 ```
 
-Open `http://127.0.0.1:4173`. The dependency-free frontend is served directly, so content and interface changes do not require a rebuild. It includes eight views: Discover, Paper, Brief, Evidence, Concepts, Market, Review, and Feedback.
+Open [http://127.0.0.1:4173](http://127.0.0.1:4173).
 
-Frontend-only checks also run without rebuilding:
+The shortest product tour is:
+
+1. start on the animated landing page;
+2. choose **Enter Glyph**, then **Explore the Kimi K3 demo**;
+3. open the Kimi K3 model card to see its labels and ranking rationale;
+4. enter the Reader and switch between the editorial analysis and source
+   evidence;
+5. select a claim to jump to its supporting page and highlighted passage.
+
+You can also open the worked example directly:
+
+- Models: [http://127.0.0.1:4173/layers/models](http://127.0.0.1:4173/layers/models)
+- Evidence Reader: [http://127.0.0.1:4173/reader/kimi-k3-open-frontier-intelligence](http://127.0.0.1:4173/reader/kimi-k3-open-frontier-intelligence)
+
+The repository also includes an eight-view product prototype—Discover, Paper,
+Brief, Evidence, Concepts, Market, Review, and Feedback—at hash routes such as
+`http://127.0.0.1:4173/#/discover`. These views deliberately use a clearly
+labelled synthetic paper fixture. The Kimi K3 routes use an attached first-party
+launch-blog printout and a provisional Glyph analysis; that analysis has not
+been independently validated and is not presented as Kimi's technical report.
+
+### Build and verify
 
 ```bash
 pnpm test:frontend
+pnpm build
+pnpm preview
 ```
 
-Create and preview the static production output with `pnpm build` and `pnpm preview`.
+`pnpm preview` serves the static production output at
+[http://127.0.0.1:4173](http://127.0.0.1:4173).
 
-### Kimi K3 worked example
+## Product components
 
-- Models category: `http://127.0.0.1:4173/layers/models`
-- Evidence Reader: `http://127.0.0.1:4173/reader/kimi-k3-open-frontier-intelligence`
+| Component | What it provides | Main location |
+| --- | --- | --- |
+| Landing and sign-in | Product story, interactive digest preview, and demo entry | `index.html`, `app.js`, `styles.css` |
+| Models catalogue | Editorial labels, source boundaries, abstracts, and explainable scoring | `src/models-catalog.mjs`, `packages/recommendation` |
+| Evidence Reader | Progressive analysis, claim selection, exact source pages, and evidence highlighting | `src/kimi-reader.mjs`, `fixtures/evidence`, `content/kimi-k3` |
+| Research workspace | Discover-to-feedback prototype covering the complete editorial journey | `src/demo-content.mjs`, `src/routes.mjs` |
+| API | Fastify REST/OpenAPI surface for sources, papers, workflows, reviews, and publication | `apps/api` |
+| Worker | Idempotent asynchronous pipeline and daily source-scan entry point | `apps/worker` |
+| Domain and application core | Evidence schemas, publication invariants, use cases, and provider-neutral ports | `packages/domain`, `packages/application` |
+| Persistence | In-memory local adapter, PostgreSQL adapter, schema, and ordered migrations | `packages/database` |
+| GPT-5.6 boundary | Structured Responses API transport, evidence drafter, and eight semantic agents | `packages/openai` |
 
-The Reader separates the attached 21-page Kimi launch-blog printout and its normalized evidence coordinates from the complete supplied `Glyph №1` editorial analysis. The analysis is labelled provisional and not independently validated; it is not presented as the official Kimi technical report, which the source announces but does not include.
+The backend is a modular TypeScript monolith. Its dependency direction is
+`api/worker -> application -> domain`; database and model providers sit behind
+application interfaces so that editorial rules remain independent from a
+specific vendor.
 
-## Running the backend
+## Run the backend
 
-Copy `.env.example` to `.env`, set a long random `GLYPH_EDITOR_TOKEN`, and keep `GLYPH_ALLOW_IN_MEMORY=true` for ephemeral local development. Export those values, then run:
+For ephemeral local development, provide a long editor token and enable the
+in-memory adapter:
 
 ```bash
+export GLYPH_EDITOR_TOKEN="replace-with-a-long-random-secret"
+export GLYPH_ALLOW_IN_MEMORY=true
 pnpm dev:api
 ```
 
-The API listens on `http://127.0.0.1:4000`; OpenAPI documentation is available at `/docs`. For PostgreSQL, set `DATABASE_URL` and run `pnpm --filter @glyph/database migrate` before starting the API.
+The API runs at [http://127.0.0.1:4000](http://127.0.0.1:4000), with OpenAPI
+documentation at [http://127.0.0.1:4000/docs](http://127.0.0.1:4000/docs).
+Editor mutations require both `Authorization: Bearer <GLYPH_EDITOR_TOKEN>` and
+an `x-glyph-actor-id` header.
 
-Verification:
+To use PostgreSQL, set `DATABASE_URL`, leave in-memory mode disabled, and run:
 
 ```bash
-pnpm verify:backend
+pnpm --filter @glyph/database migrate
+pnpm dev:api
 ```
 
-Backend boundaries and deferred capabilities are documented in
-[`docs/BACKEND_ARCHITECTURE.md`](docs/BACKEND_ARCHITECTURE.md).
+Run the complete repository verification with:
 
-To execute the eight semantic runtime agents, provide `OPENAI_API_KEY` only in
-the runtime environment and keep `OPENAI_MODEL=gpt-5.6-terra`. The source
-tracker, stored ontology, workflow trace, and publication gates work without a
-model key; semantic workflow execution fails closed until the key is present.
-See [`docs/RUNTIME_AGENTS.md`](docs/RUNTIME_AGENTS.md) for the API sequence and
-the production inputs that are still required.
-
-Before submission, a person who did not build the project must clone the repository into a clean directory and successfully follow the final Quickstart without undocumented steps.
-
-## Replacing the synthetic paper
-
-The handoff format is documented in [`docs/PAPER_HANDOFF.md`](docs/PAPER_HANDOFF.md). The product reads its current fixture from [`src/demo-content.mjs`](src/demo-content.mjs); replace it only after every material claim and exact supporting passage has been human checked.
-
-## OpenAI boundary
-
-The tested GPT-5.6 boundary lives in [`packages/openai`](packages/openai/src/index.ts). It uses the Responses API with GPT-5.6 Terra to draft structured content only from evidence spans supplied by the application, then rejects unknown citations and malformed support states. No live key is needed for tests. See [`docs/OPENAI_INTEGRATION.md`](docs/OPENAI_INTEGRATION.md).
+```bash
+pnpm verify
+```
 
 ## How Codex and GPT-5.6 were used
 
-So far, Codex has been used to structure the product requirements, maintain the acceptance ledger, audit repository readiness, prepare the hackathon submission workflow, implement and test the evidence-first backend foundation, define the paper/evidence contracts, implement the eight-view responsive prototype, and add the tested GPT-5.6 structured-output boundary. The final README must still be updated with specific reviewed examples and the main build-session ID before submission, including:
+### Codex: product and engineering collaborator
 
-- which product or engineering tasks Codex completed and which a team member reviewed;
-- where GPT-5.6 was used in the running product, if applicable;
-- one concrete example of the input, generated output, and human verification;
-- safeguards used to keep claims linked to evidence or return insufficient evidence;
-- relevant Codex `/feedback` session ID.
+Codex was used directly in the repository to translate the product brief into
+the PRD and acceptance ledger, implement the responsive web experience and
+evidence-first backend, define data and API contracts, add tests and validation,
+and prepare the project documentation and submission workflow. It also helped
+audit the repository against explicit completion gates instead of treating code
+generation as proof that a feature was done.
 
-Do not replace these specifics with a generic claim that “AI helped us build faster.”
+Product positioning, source selection, editorial judgment, evidence approval,
+and the final decision to publish remain human responsibilities. Generated code
+and copy are expected to pass the same review and verification steps as any
+other contribution.
 
-## Hackathon submission
+### GPT-5.6: bounded semantic runtime
 
-The submission command center is [`submission/README.md`](submission/README.md). It includes the Devpost draft, sub-three-minute demo script, recording and YouTube runbook, repository-access instructions, evidence tracker, and final audit checklist.
+The running backend is designed to use `gpt-5.6-terra` through the OpenAI
+Responses API for eight narrow semantic roles:
+
+- paper classification;
+- shortlist ranking;
+- evidence extraction;
+- paper summarization;
+- concept mapping;
+- market-context analysis;
+- integrity review;
+- editorial packaging.
+
+There is also a focused evidence-drafting adapter. It receives a paper title,
+an investor question, and pre-selected evidence spans; it returns a structured
+summary, claims, limitations, and open questions.
+
+The model does not receive publication authority or unrestricted source access.
+Its output is constrained by strict JSON Schema, parsed again with Zod, and
+checked against known paper versions, evidence IDs, pages, concepts, and market
+records. Unknown citations, malformed support states, refusals, and unsupported
+cross-record references fail closed. Responses are requested with `store:
+false`, bounded retries, and explicit timeouts.
+
+The automated tests use a mock transport and do not require a live credential.
+To execute semantic agents, provide `OPENAI_API_KEY` at runtime and optionally
+override `OPENAI_MODEL`. Live workflow execution also requires an
+editor-approved label ontology and real source inputs. No API key belongs in
+the repository.
+
+## Current scope
+
+This repository contains a polished frontend worked example and an implemented,
+tested backend foundation; they are not yet a production end-to-end service.
+Production connectors, a real PDF extraction pipeline, approved source and
+rights policies, gold evaluation sets, market-data adapters, hosted workers,
+and final identity infrastructure remain future work. The evidence and
+publication boundaries are implemented now so those integrations can be added
+without weakening the core trust model.
+
+## Documentation
+
+- [Product requirements](docs/PRD.md)
+- [Project status](docs/PROJECT_STATUS.md)
+- [Backend architecture](docs/BACKEND_ARCHITECTURE.md)
+- [Runtime agent system](docs/RUNTIME_AGENTS.md)
+- [OpenAI integration boundary](docs/OPENAI_INTEGRATION.md)
+- [Paper and evidence handoff](docs/PAPER_HANDOFF.md)
+- [Submission package](submission/README.md)
