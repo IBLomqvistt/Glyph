@@ -45,10 +45,11 @@ Open [http://127.0.0.1:4173](http://127.0.0.1:4173).
 The shortest product tour is:
 
 1. start on the animated landing page;
-2. choose **Enter Glyph** to open the Discover research desk;
-3. open the selected paper, then move through Brief, Evidence, Concepts, and
+2. choose **Enter Glyph** to open the sign-in handoff;
+3. sign in or choose **Explore the Glyph workspace** to open Discover;
+4. open the selected paper, then move through Brief, Evidence, Concepts, and
    Market;
-4. use Review to inspect publication blockers and Feedback to record reader
+5. use Review to inspect publication blockers and Feedback to record reader
    preferences.
 
 You can also open the worked example directly:

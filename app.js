@@ -157,7 +157,7 @@ function renderLanding() {
             <div class="benefit-row"><span>${icon('shield')}</span><p>See what the evidence supports</p></div>
             <div class="benefit-row"><span>${icon('chart')}</span><p>Connect technical change to economic relevance</p></div>
           </div>
-          <a class="enter-glyph entrance-item" href="${workedExampleRoutes.product}"><span>Enter Glyph</span>${renderMascot({ compact: true })}<b aria-hidden="true">→</b></a>
+          <a class="enter-glyph entrance-item" href="${workedExampleRoutes.login}"><span>Enter Glyph</span>${renderMascot({ compact: true })}<b aria-hidden="true">→</b></a>
           <p class="hero-footnote entrance-item">Built for investors who need to understand the frontier,<br>not merely follow it.</p>
         </div>
         <article class="product-demo" aria-labelledby="digest-title">
@@ -191,19 +191,81 @@ function renderLogin() {
   return `
     <main class="login-page" aria-labelledby="login-title">
       <a class="login-brand" href="/" aria-label="Back to Glyph home"><span>Glyph</span>${renderMascot({ compact: true })}</a>
-      <section class="login-card">
-        <p class="landing-eyebrow">Your research desk awaits</p>
-        <h1 id="login-title">Enter Glyph.</h1>
-        <p>Sign in to continue to the investor research workspace.</p>
-        <form class="login-form" data-login-form>
-          <label for="login-email">Work email</label>
-          <input id="login-email" name="email" type="email" autocomplete="email" placeholder="you@company.com" required>
-          <button type="submit">Continue to Glyph <span aria-hidden="true">→</span></button>
-        </form>
-        <div class="login-divider"><span>or</span></div>
-        <a class="demo-login" href="${workedExampleRoutes.product}">Explore the Glyph workspace</a>
-        <p class="login-note">By continuing, you agree to use source-linked research responsibly. Glyph does not provide investment advice.</p>
-      </section>
+      <div class="login-shell">
+        <section class="login-card">
+          <p class="landing-eyebrow">Your research desk awaits</p>
+          <h1 id="login-title">Enter Glyph.</h1>
+          <p>Sign in to turn frontier research into inspectable decision context.</p>
+          <form class="login-form" data-login-form>
+            <label for="login-email">Work email</label>
+            <input id="login-email" name="email" type="email" autocomplete="email" placeholder="you@company.com" required>
+            <button type="submit">Continue to Glyph <span aria-hidden="true">→</span></button>
+          </form>
+          <div class="login-divider"><span>or</span></div>
+          <a class="demo-login" href="${workedExampleRoutes.product}">Explore the Glyph workspace</a>
+          <p class="login-note">Source-linked research only. Glyph does not provide investment advice.</p>
+        </section>
+
+        <section class="login-vision" aria-labelledby="login-vision-title">
+          <header class="login-vision-header">
+            <p>Research, transformed</p>
+            <h2 id="login-vision-title">From frontier signals to decision clarity.</h2>
+          </header>
+          <div class="login-flow">
+            <svg class="login-flow-lines" viewBox="0 0 760 430" preserveAspectRatio="none" aria-hidden="true">
+              <defs>
+                <linearGradient id="login-flow-in" x1="0" x2="1"><stop stop-color="#93d9ff"/><stop offset="1" stop-color="#795cf4"/></linearGradient>
+                <linearGradient id="login-flow-out" x1="0" x2="1"><stop stop-color="#795cf4"/><stop offset="1" stop-color="#65cbea"/></linearGradient>
+                <marker id="login-arrow-in" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0 0 7 3.5 0 7Z" fill="#795cf4"/></marker>
+                <marker id="login-arrow-out" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0 0 7 3.5 0 7Z" fill="#65cbea"/></marker>
+              </defs>
+              <path d="M220 82C292 82 288 196 370 212" marker-end="url(#login-arrow-in)"/>
+              <path d="M220 215C292 215 306 215 370 215" marker-end="url(#login-arrow-in)"/>
+              <path d="M220 348C292 348 288 234 370 218" marker-end="url(#login-arrow-in)"/>
+              <path class="flow-out" d="M390 212C472 196 468 82 540 82" marker-end="url(#login-arrow-out)"/>
+              <path class="flow-out" d="M390 215C454 215 468 215 540 215" marker-end="url(#login-arrow-out)"/>
+              <path class="flow-out" d="M390 218C472 234 468 348 540 348" marker-end="url(#login-arrow-out)"/>
+            </svg>
+
+            <div class="login-flow-column login-flow-inputs" aria-label="Inputs">
+              <article class="login-flow-node">
+                <span class="login-flow-icon">${icon('file')}</span>
+                <span><strong>Research</strong><small>Papers &amp; sources</small></span>
+              </article>
+              <article class="login-flow-node">
+                <span class="login-flow-icon">${icon('chart')}</span>
+                <span><strong>Context</strong><small>Metrics &amp; markets</small></span>
+              </article>
+              <article class="login-flow-node">
+                <span class="login-flow-icon">${icon('help')}</span>
+                <span><strong>Judgment</strong><small>Questions &amp; approval</small></span>
+              </article>
+            </div>
+
+            <div class="login-flow-core" aria-label="Glyph evidence-first synthesis">
+              <span class="login-core-orbit" aria-hidden="true"></span>
+              ${renderMascot()}
+              <strong>Glyph</strong>
+              <small>Evidence-first synthesis</small>
+            </div>
+
+            <div class="login-flow-column login-flow-outputs" aria-label="Outcomes">
+              <article class="login-flow-node">
+                <span class="login-flow-icon">${icon('sparkle')}</span>
+                <span><strong>Clarity</strong><small>Mechanisms made clear</small></span>
+              </article>
+              <article class="login-flow-node">
+                <span class="login-flow-icon">${icon('shield')}</span>
+                <span><strong>Confidence</strong><small>Claims tied to evidence</small></span>
+              </article>
+              <article class="login-flow-node">
+                <span class="login-flow-icon">${icon('nodes')}</span>
+                <span><strong>Control</strong><small>Human approval stays final</small></span>
+              </article>
+            </div>
+          </div>
+        </section>
+      </div>
       <p class="login-back"><a href="/">← Back to the landing page</a></p>
     </main>
   `

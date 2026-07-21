@@ -73,11 +73,18 @@ test('the first-entry experience preserves the required Glyph narrative and hand
   assert.match(app, /Those who understand/)
   assert.match(app, /Glyph closes the gap/)
   assert.match(app, /Kimi K3: Efficiency at 2\.8T Parameters/)
+  assert.match(app, /From frontier signals to decision clarity\./)
+  assert.match(app, /Research[\s\S]+Context[\s\S]+Judgment/)
+  assert.match(app, /Clarity[\s\S]+Confidence[\s\S]+Control/)
+  assert.match(
+    app,
+    /class="enter-glyph[^>]+href="\$\{workedExampleRoutes\.login\}"/,
+  )
   assert.match(app, /href="\$\{workedExampleRoutes\.product\}"/)
   assert.match(app, /window\.location\.assign\(workedExampleRoutes\.product\)/)
   assert.doesNotMatch(
     app,
-    /class="enter-glyph[^>]+href="\/(?:login|layers\/models)"/,
+    /class="enter-glyph[^>]+href="\/layers\/models"/,
   )
   assert.match(app, /prefers-reduced-motion|data-architecture/)
 })
