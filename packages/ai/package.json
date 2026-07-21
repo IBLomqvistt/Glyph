@@ -1,0 +1,18 @@
+{
+  "name": "@glyph/ai",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "lint": "eslint src --max-warnings 0",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@glyph/application": "workspace:*",
+    "@glyph/domain": "workspace:*",
+    "openai": "^6.48.0"
+  }
+}

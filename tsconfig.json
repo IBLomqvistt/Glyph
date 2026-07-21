@@ -1,20 +1,15 @@
 {
   "extends": "./tsconfig.base.json",
   "compilerOptions": {
-    "noEmit": true,
-    "baseUrl": ".",
-    "paths": {
-      "@glyph/domain": ["packages/domain/src/index.ts"],
-      "@glyph/domain/runtime-agents": ["packages/domain/src/runtime-agents.ts"],
-      "@glyph/application": ["packages/application/src/index.ts"],
-      "@glyph/database": ["packages/database/src/index.ts"],
-      "@glyph/openai": ["packages/openai/src/index.ts"]
-    }
+    "lib": ["ES2022", "DOM"]
   },
   "include": [
-    "apps/**/*.ts",
-    "packages/**/*.ts",
-    "packages/**/*.mts",
-    "vitest.config.ts"
+    "eslint.config.mjs",
+    "playwright.config.ts",
+    "vitest.config.ts",
+    "scripts/**/*.ts",
+    "evals/**/*.ts",
+    "fixtures/**/*.ts",
+    "apps/web/e2e/**/*.ts"
   ]
 }

@@ -1,23 +1,19 @@
 import {
-  PipelineRunSchema,
-  SourceAuditEventSchema,
-  SourceRegistryEntrySchema,
-  publicationBlockers,
+  QuestionAnswerSchema,
   schemaVersion,
+  type AiGenerationRecord,
   type Claim,
   type ConceptCard,
   type EvidenceSpan,
   type Id,
-  type MarketMetric,
   type Paper,
   type PaperVersion,
   type PipelineRun,
   type PipelineStage,
-  type PublicationInput,
+  type QuestionAnswer,
   type Report,
   type ReportSection,
-  type SourceAuditEvent,
-  type SourceRegistryEntry,
+  type UserProfile,
   type VisualSpec,
 } from '@glyph/domain'
 
@@ -30,347 +26,272 @@ export type GlyphEdition = {
   evidenceSpans: EvidenceSpan[]
   concepts: ConceptCard[]
   visuals: VisualSpec[]
-  marketMetrics: MarketMetric[]
 }
 
-export interface GlyphRepository {
-  healthCheck(): Promise<void>
-
-  listSources(): Promise<SourceRegistryEntry[]>
-  getSource(id: Id): Promise<SourceRegistryEntry | null>
-  saveSource(source: SourceRegistryEntry): Promise<void>
-  appendSourceAudit(event: SourceAuditEvent): Promise<void>
-  listSourceAudit(sourceId: Id): Promise<SourceAuditEvent[]>
-
+export interface PaperRepository {
   getPaper(id: Id): Promise<Paper | null>
-  savePaper(paper: Paper): Promise<void>
-  getPaperVersion(id: Id): Promise<PaperVersion | null>
-  savePaperVersion(version: PaperVersion): Promise<void>
+  getVersion(id: Id): Promise<PaperVersion | null>
+}
 
+export interface ReportRepository {
   getEditionBySlug(slug: string): Promise<GlyphEdition | null>
-  getEditionByReportId(reportId: Id): Promise<GlyphEdition | null>
-  saveEdition(edition: GlyphEdition): Promise<void>
-
-  findPipelineRun(idempotencyKey: string): Promise<PipelineRun | null>
-  savePipelineRun(run: PipelineRun): Promise<void>
 }
 
-export interface SourceConnectorTester {
-  test(source: SourceRegistryEntry): Promise<{ ok: boolean; detail: string }>
+export interface ConceptRepository {
+  listSaved(userId: Id): Promise<ConceptCard[]>
+  save(userId: Id, conceptId: Id): Promise<void>
+  unsave(userId: Id, conceptId: Id): Promise<void>
 }
 
-export interface StageExecutor {
-  execute(input: {
+export interface PipelineRunRepository {
+  findByIdempotencyKey(key: string): Promise<PipelineRun | null>
+  save(run: PipelineRun): Promise<void>
+}
+
+export interface JobRunner {
+  runStage(input: {
     paperVersionId: Id
     stage: PipelineStage
-  }): Promise<Record<string, unknown>>
+    idempotencyKey: string
+    effect: () => Promise<Record<string, unknown>>
+  }): Promise<PipelineRun>
 }
 
-export type Clock = () => string
-export type IdFactory = (prefix: string) => string
+export interface PaperAssetStore {
+  getPdfBytes(paperVersionId: Id): Promise<Uint8Array | null>
+}
 
-const defaultClock: Clock = () => new Date().toISOString()
-const defaultIdFactory: IdFactory = (prefix) =>
-  `${prefix}-${crypto.randomUUID()}`
+export interface AiGenerationGateway {
+  classify(input: {
+    title: string
+    abstract: string
+  }): Promise<AiGenerationRecord>
+  extractEvidence(input: {
+    paperVersionId: Id
+    text: string
+  }): Promise<AiGenerationRecord>
+  synthesizeReport(input: { paperVersionId: Id }): Promise<AiGenerationRecord>
+  critiqueReport(input: { reportId: Id }): Promise<AiGenerationRecord>
+  answerQuestion(input: {
+    reportId: Id
+    question: string
+    evidenceSpans: readonly EvidenceSpan[]
+  }): Promise<AiGenerationRecord>
+}
 
-export class SourceRegistryService {
+export const illustrationPurposes = [
+  'VISUAL_ABSTRACT',
+  'EDITORIAL_ACCENT',
+] as const
+
+export type IllustrationPurpose = (typeof illustrationPurposes)[number]
+
+export type NonSemanticIllustrationBrief = {
+  paperVersionId: Id
+  purpose: IllustrationPurpose
+  brief: string
+}
+
+export type IllustrationDraft = {
+  paperVersionId: Id
+  purpose: IllustrationPurpose
+  model: string
+  promptVersion: string
+  generatedAt: string
+  mimeType: 'image/png'
+  imageBase64: string
+  reviewStatus: 'PENDING_HUMAN_REVIEW'
+  semanticUseAllowed: false
+}
+
+export interface IllustrationGenerationGateway {
+  generateDraft(input: NonSemanticIllustrationBrief): Promise<IllustrationDraft>
+}
+
+export class GenerateIllustrationDraftService {
+  constructor(private readonly gateway: IllustrationGenerationGateway) {}
+
+  async execute(
+    input: NonSemanticIllustrationBrief & {
+      editorConfirmedNonSemanticUse: boolean
+    },
+  ): Promise<IllustrationDraft> {
+    if (!input.editorConfirmedNonSemanticUse) {
+      throw new Error('ILLUSTRATION_GENERATION_REQUIRES_EDITOR_CONFIRMATION')
+    }
+    if (!illustrationPurposes.includes(input.purpose)) {
+      throw new Error('INVALID_ILLUSTRATION_PURPOSE')
+    }
+    const brief = input.brief.trim()
+    if (brief.length < 12 || brief.length > 800) {
+      throw new Error('ILLUSTRATION_BRIEF_LENGTH_INVALID')
+    }
+
+    const draft = await this.gateway.generateDraft({
+      paperVersionId: input.paperVersionId,
+      purpose: input.purpose,
+      brief,
+    })
+    if (
+      draft.reviewStatus !== 'PENDING_HUMAN_REVIEW' ||
+      draft.semanticUseAllowed !== false
+    ) {
+      throw new Error('ILLUSTRATION_REVIEW_BOUNDARY_VIOLATED')
+    }
+    return draft
+  }
+}
+
+export interface SubscriptionGateway {
+  accessForUser(userId: Id): Promise<'PUBLIC' | 'SUBSCRIBER' | 'EDITOR'>
+  createCheckoutSession(userId: Id): Promise<{ url: string }>
+}
+
+export interface AuthGateway {
+  currentUser(): Promise<UserProfile>
+  requireRole(role: UserProfile['role']): Promise<UserProfile>
+}
+
+export interface EmailGateway {
+  previewNewsletter(reportId: Id): Promise<string>
+  sendNewsletter(reportId: Id): Promise<never>
+}
+
+export interface SocialDistributionGateway {
+  previewPost(reportId: Id): Promise<string>
+  publishPost(reportId: Id): Promise<never>
+}
+
+export class FixtureCitedQuestionService {
+  readonly #answers: QuestionAnswer[]
+  readonly #evidenceIds: Set<Id>
+  readonly #timestamp: string
+
   constructor(
-    private readonly repository: GlyphRepository,
-    private readonly connectorTester: SourceConnectorTester,
-    private readonly clock: Clock = defaultClock,
-    private readonly ids: IdFactory = defaultIdFactory,
-  ) {}
-
-  list(): Promise<SourceRegistryEntry[]> {
-    return this.repository.listSources()
+    answers: readonly QuestionAnswer[],
+    evidenceSpans: readonly EvidenceSpan[],
+    timestamp = '2026-07-21T00:00:00.000Z',
+  ) {
+    this.#answers = [...answers]
+    this.#evidenceIds = new Set(evidenceSpans.map((span) => span.id))
+    this.#timestamp = timestamp
   }
 
-  audit(sourceId: Id): Promise<SourceAuditEvent[]> {
-    return this.repository.listSourceAudit(sourceId)
-  }
-
-  async create(
-    input: Omit<
-      SourceRegistryEntry,
-      'schemaVersion' | 'id' | 'createdAt' | 'updatedAt'
-    >,
-    actorId: Id,
-  ): Promise<SourceRegistryEntry> {
-    const timestamp = this.clock()
-    const source = SourceRegistryEntrySchema.parse({
-      ...input,
-      schemaVersion,
-      id: this.ids('source'),
-      createdAt: timestamp,
-      updatedAt: timestamp,
-    })
-    await this.repository.saveSource(source)
-    await this.recordAudit(
-      source.id,
-      actorId,
-      'CREATED',
-      'SUCCEEDED',
-      'Source created',
+  answerQuestion(reportId: Id, question: string): Promise<QuestionAnswer> {
+    const normalizedQuestion = question.trim().toLocaleLowerCase('en')
+    const candidate = this.#answers.find(
+      (answer) =>
+        answer.reportId === reportId &&
+        answer.question.trim().toLocaleLowerCase('en') === normalizedQuestion,
     )
-    return source
-  }
-
-  async setEnabled(
-    sourceId: Id,
-    enabled: boolean,
-    actorId: Id,
-  ): Promise<SourceRegistryEntry> {
-    const existing = await this.repository.getSource(sourceId)
-    if (existing === null) {
-      throw new ApplicationError(
-        'SOURCE_NOT_FOUND',
-        `Unknown source ${sourceId}`,
-        404,
-      )
+    if (
+      candidate?.outcome === 'ANSWER' &&
+      candidate.evidenceSpanIds.every((id) => this.#evidenceIds.has(id))
+    ) {
+      return Promise.resolve(candidate)
     }
-    const updated = SourceRegistryEntrySchema.parse({
-      ...existing,
-      enabled,
-      updatedAt: this.clock(),
-    })
-    await this.repository.saveSource(updated)
-    await this.recordAudit(
-      sourceId,
-      actorId,
-      enabled ? 'ENABLED' : 'DISABLED',
-      'SUCCEEDED',
-      enabled ? 'Source enabled' : 'Source disabled',
-    )
-    return updated
-  }
-
-  async test(
-    sourceId: Id,
-    actorId: Id,
-  ): Promise<{ ok: boolean; detail: string }> {
-    const source = await this.repository.getSource(sourceId)
-    if (source === null) {
-      throw new ApplicationError(
-        'SOURCE_NOT_FOUND',
-        `Unknown source ${sourceId}`,
-        404,
-      )
+    if (candidate?.outcome === 'INSUFFICIENT_EVIDENCE') {
+      return Promise.resolve(candidate)
     }
-    const result = await this.connectorTester.test(source)
-    await this.recordAudit(
-      sourceId,
-      actorId,
-      'TESTED',
-      result.ok ? 'SUCCEEDED' : 'FAILED',
-      result.detail,
-    )
-    return result
-  }
-
-  private async recordAudit(
-    sourceId: Id,
-    actorId: Id,
-    action: SourceAuditEvent['action'],
-    outcome: SourceAuditEvent['outcome'],
-    detail: string,
-  ): Promise<void> {
-    await this.repository.appendSourceAudit(
-      SourceAuditEventSchema.parse({
+    return Promise.resolve(
+      QuestionAnswerSchema.parse({
         schemaVersion,
-        id: this.ids('audit'),
-        sourceId,
-        actorId,
-        action,
-        outcome,
-        detail,
-        occurredAt: this.clock(),
+        id: `answer-insufficient-${stableTextHash(normalizedQuestion)}`,
+        reportId,
+        question: question.trim(),
+        outcome: 'INSUFFICIENT_EVIDENCE',
+        answerText: null,
+        evidenceSpanIds: [],
+        generatedAt: this.#timestamp,
+        validatedAt: this.#timestamp,
       }),
     )
   }
 }
 
-export class PipelineService {
-  constructor(
-    private readonly repository: GlyphRepository,
-    private readonly executor: StageExecutor,
-    private readonly clock: Clock = defaultClock,
-    private readonly ids: IdFactory = defaultIdFactory,
-  ) {}
+function stableTextHash(value: string): string {
+  let hash = 2166136261
+  for (const character of value) {
+    hash ^= character.codePointAt(0) ?? 0
+    hash = Math.imul(hash, 16777619)
+  }
+  return (hash >>> 0).toString(16).padStart(8, '0')
+}
 
-  async run(input: {
-    paperVersionId: Id
-    stage: PipelineStage
-    idempotencyKey: string
-  }): Promise<PipelineRun> {
-    const existing = await this.repository.findPipelineRun(input.idempotencyKey)
-    if (existing?.status === 'SUCCEEDED' || existing?.status === 'RUNNING') {
-      return existing
-    }
+export class InMemoryReportRepository implements ReportRepository {
+  readonly #editions: Map<string, GlyphEdition>
 
-    const timestamp = this.clock()
-    const running = PipelineRunSchema.parse({
-      schemaVersion,
-      id: existing?.id ?? this.ids('run'),
-      paperVersionId: input.paperVersionId,
-      stage: input.stage,
-      attempt: (existing?.attempt ?? 0) + 1,
-      idempotencyKey: input.idempotencyKey,
-      status: 'RUNNING',
-      result: null,
-      error: null,
-      createdAt: existing?.createdAt ?? timestamp,
-      updatedAt: timestamp,
-    })
-    await this.repository.savePipelineRun(running)
+  constructor(editions: readonly GlyphEdition[]) {
+    this.#editions = new Map(
+      editions.map((edition) => [edition.report.slug, edition]),
+    )
+  }
 
-    try {
-      const result = await this.executor.execute(input)
-      const succeeded = PipelineRunSchema.parse({
-        ...running,
-        status: 'SUCCEEDED',
-        result,
-        updatedAt: this.clock(),
-      })
-      await this.repository.savePipelineRun(succeeded)
-      return succeeded
-    } catch (error) {
-      const failed = PipelineRunSchema.parse({
-        ...running,
-        status: 'FAILED',
-        error: {
-          code: 'STAGE_FAILED',
-          message:
-            error instanceof Error ? error.message : 'Unknown stage failure',
-        },
-        updatedAt: this.clock(),
-      })
-      await this.repository.savePipelineRun(failed)
-      return failed
-    }
+  getEditionBySlug(slug: string): Promise<GlyphEdition | null> {
+    return Promise.resolve(this.#editions.get(slug) ?? null)
   }
 }
 
-export class EditorialService {
-  constructor(
-    private readonly repository: GlyphRepository,
-    private readonly clock: Clock = defaultClock,
-  ) {}
+export class InMemoryPaperRepository implements PaperRepository {
+  readonly #papers: Map<Id, Paper>
+  readonly #versions: Map<Id, PaperVersion>
 
-  async approve(input: {
-    reportId: Id
-    editorId: Id
-    integrityReview: PublicationInput['integrityReview']
-  }): Promise<Report> {
-    const edition = await this.requireEdition(input.reportId)
-    const timestamp = this.clock()
-    const candidate: Report = {
-      ...edition.report,
-      status: 'APPROVED',
-      updatedAt: timestamp,
-      editorApproval: { editorId: input.editorId, approvedAt: timestamp },
-    }
-    const blockers = publicationBlockers({
-      report: candidate,
-      paperVersion: edition.version,
-      claims: edition.claims,
-      evidenceSpans: edition.evidenceSpans,
-      visuals: edition.visuals,
-      marketMetrics: edition.marketMetrics,
-      integrityReview: input.integrityReview,
-    })
-    if (blockers.length > 0) {
-      throw new ApplicationError(
-        'PUBLICATION_BLOCKED',
-        'Report cannot be approved while integrity blockers remain',
-        409,
-        blockers,
-      )
-    }
-    await this.repository.saveEdition({ ...edition, report: candidate })
-    return candidate
+  constructor(papers: readonly Paper[], versions: readonly PaperVersion[]) {
+    this.#papers = new Map(papers.map((paper) => [paper.id, paper]))
+    this.#versions = new Map(versions.map((version) => [version.id, version]))
   }
 
-  async publish(input: {
-    reportId: Id
-    integrityReview: PublicationInput['integrityReview']
-  }): Promise<Report> {
-    const edition = await this.requireEdition(input.reportId)
-    const blockers = publicationBlockers({
-      report: edition.report,
-      paperVersion: edition.version,
-      claims: edition.claims,
-      evidenceSpans: edition.evidenceSpans,
-      visuals: edition.visuals,
-      marketMetrics: edition.marketMetrics,
-      integrityReview: input.integrityReview,
-    })
-    if (blockers.length > 0) {
-      throw new ApplicationError(
-        'PUBLICATION_BLOCKED',
-        'Report cannot be published while blockers remain',
-        409,
-        blockers,
-      )
-    }
-    const published: Report = {
-      ...edition.report,
-      status: 'PUBLISHED',
-      updatedAt: this.clock(),
-    }
-    await this.repository.saveEdition({ ...edition, report: published })
-    return published
+  getPaper(id: Id): Promise<Paper | null> {
+    return Promise.resolve(this.#papers.get(id) ?? null)
   }
 
-  private async requireEdition(reportId: Id): Promise<GlyphEdition> {
-    const edition = await this.repository.getEditionByReportId(reportId)
-    if (edition === null) {
-      throw new ApplicationError(
-        'REPORT_NOT_FOUND',
-        `Unknown report ${reportId}`,
-        404,
-      )
-    }
-    return edition
+  getVersion(id: Id): Promise<PaperVersion | null> {
+    return Promise.resolve(this.#versions.get(id) ?? null)
   }
 }
 
-export class ApplicationError extends Error {
-  constructor(
-    readonly code: string,
-    message: string,
-    readonly statusCode: number,
-    readonly details?: unknown,
-  ) {
-    super(message)
-    this.name = 'ApplicationError'
-  }
-}
+export class InMemoryConceptRepository implements ConceptRepository {
+  readonly #concepts: Map<Id, ConceptCard>
+  readonly #saved = new Map<Id, Set<Id>>()
 
-export class DeferredConnectorTester implements SourceConnectorTester {
-  test(source: SourceRegistryEntry): Promise<{ ok: boolean; detail: string }> {
-    return Promise.resolve({
-      ok: false,
-      detail: `Connector ${source.connectorKey} is not configured; live source access is deferred`,
-    })
+  constructor(concepts: readonly ConceptCard[]) {
+    this.#concepts = new Map(concepts.map((concept) => [concept.id, concept]))
   }
-}
 
-export class DeferredStageExecutor implements StageExecutor {
-  execute(input: {
-    paperVersionId: Id
-    stage: PipelineStage
-  }): Promise<Record<string, unknown>> {
-    if (['PUBLISH', 'DISTRIBUTE'].includes(input.stage)) {
-      return Promise.reject(
-        new Error(`${input.stage} requires an approved provider configuration`),
-      )
+  listSaved(userId: Id): Promise<ConceptCard[]> {
+    const ids = this.#saved.get(userId) ?? new Set<Id>()
+    return Promise.resolve(
+      [...ids]
+        .map((id) => this.#concepts.get(id))
+        .filter((concept): concept is ConceptCard => concept !== undefined),
+    )
+  }
+
+  save(userId: Id, conceptId: Id): Promise<void> {
+    if (!this.#concepts.has(conceptId)) {
+      return Promise.reject(new Error(`Unknown concept: ${conceptId}`))
     }
-    return Promise.resolve({
-      deferred: true,
-      stage: input.stage,
-      paperVersionId: input.paperVersionId,
-    })
+    const saved = this.#saved.get(userId) ?? new Set<Id>()
+    saved.add(conceptId)
+    this.#saved.set(userId, saved)
+    return Promise.resolve()
+  }
+
+  unsave(userId: Id, conceptId: Id): Promise<void> {
+    this.#saved.get(userId)?.delete(conceptId)
+    return Promise.resolve()
   }
 }
 
-export * from './runtime-agents.js'
+export class InMemoryPipelineRunRepository implements PipelineRunRepository {
+  readonly #runs = new Map<string, PipelineRun>()
+
+  findByIdempotencyKey(key: string): Promise<PipelineRun | null> {
+    return Promise.resolve(this.#runs.get(key) ?? null)
+  }
+
+  save(run: PipelineRun): Promise<void> {
+    this.#runs.set(run.idempotencyKey, run)
+    return Promise.resolve()
+  }
+}

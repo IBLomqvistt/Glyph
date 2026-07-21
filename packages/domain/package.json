@@ -4,20 +4,11 @@
   "private": true,
   "type": "module",
   "exports": {
-    ".": {
-      "types": "./src/index.ts",
-      "source": "./src/index.ts",
-      "default": "./dist/index.js"
-    },
-    "./runtime-agents": {
-      "types": "./src/runtime-agents.ts",
-      "source": "./src/runtime-agents.ts",
-      "default": "./dist/runtime-agents.js"
-    }
+    ".": "./src/index.ts"
   },
   "scripts": {
-    "build": "tsc -p tsconfig.json",
-    "typecheck": "tsc --noEmit -p tsconfig.json"
+    "lint": "eslint src --max-warnings 0",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "zod": "^4.1.5"

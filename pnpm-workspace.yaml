@@ -1,13 +1,9 @@
 packages:
   - apps/*
   - packages/*
-
 allowBuilds:
   esbuild: true
-
+  sharp: true
+  unrs-resolver: true
 minimumReleaseAgeExclude:
-  - fastify@5.10.0
-  - '@fastify/swagger@9.8.1'
-  - '@fastify/swagger-ui@6.1.0'
-  - '@fastify/type-provider-typebox@6.1.0'
-  - '@sinclair/typebox@0.34.52'
+  - radix-ui@1.6.4

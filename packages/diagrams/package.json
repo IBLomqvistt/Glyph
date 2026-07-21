@@ -1,0 +1,16 @@
+{
+  "name": "@glyph/diagrams",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "lint": "eslint src --max-warnings 0",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@glyph/domain": "workspace:*"
+  }
+}

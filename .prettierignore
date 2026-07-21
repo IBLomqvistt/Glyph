@@ -1,5 +1,11 @@
+.next
+apps/web/next-env.d.ts
 coverage
 dist
 node_modules
+playwright-report
+test-results
+work
 pnpm-lock.yaml
-submission
+fixtures/kimi-k3/*.html
+apps/web/public/reports/kimi-k3/report.html

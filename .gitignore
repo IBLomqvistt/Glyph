@@ -1,7 +1,17 @@
-.DS_Store
-dist/
 node_modules/
 .pnpm-store/
+.next/
+dist/
+coverage/
+playwright-report/
+test-results/
 .env
-.env.local
-npm-debug.log*
+.env.*
+!.env.example
+*.log
+.DS_Store
+
+# Overnight evidence is local handoff material, not source.
+work/overnight/
+outputs/
+tmp/

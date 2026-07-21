@@ -1,5 +1,5 @@
 {
-  "name": "glyph-paper-intelligence",
+  "name": "glyph",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -8,30 +8,35 @@
     "node": ">=22"
   },
   "scripts": {
-    "dev": "node server.mjs",
-    "dev:api": "pnpm --filter @glyph/api dev",
-    "build": "node scripts/build.mjs",
-    "build:backend": "pnpm --filter @glyph/domain --filter @glyph/application --filter @glyph/database --filter @glyph/openai --filter @glyph/api --filter @glyph/worker build",
-    "preview": "node server.mjs --dist",
-    "format:backend": "prettier --write apps/api apps/worker packages/domain packages/application packages/database packages/openai docs/BACKEND_ARCHITECTURE.md docs/RUNTIME_AGENTS.md docs/OPENAI_INTEGRATION.md",
-    "format:check:backend": "prettier --check apps/api apps/worker packages/domain packages/application packages/database packages/openai docs/BACKEND_ARCHITECTURE.md docs/RUNTIME_AGENTS.md docs/OPENAI_INTEGRATION.md",
-    "lint:backend": "eslint apps/api apps/worker packages/domain packages/application packages/database packages/openai --max-warnings 0",
-    "test": "pnpm test:frontend && pnpm test:backend",
-    "test:frontend": "node --test tests/*.test.mjs",
-    "test:backend": "vitest run apps/api/test apps/worker packages/domain packages/application packages/database packages/openai",
-    "typecheck:backend": "pnpm --filter @glyph/domain --filter @glyph/application --filter @glyph/database --filter @glyph/openai --filter @glyph/api --filter @glyph/worker typecheck",
-    "verify:backend": "pnpm format:check:backend && pnpm lint:backend && pnpm typecheck:backend && pnpm test:backend && pnpm build:backend",
-    "verify": "pnpm test:frontend && pnpm build && pnpm verify:backend"
+    "build": "pnpm --filter @glyph/worker build && pnpm --filter @glyph/web build",
+    "dev": "pnpm --filter @glyph/web dev",
+    "eval": "vitest run evals",
+    "format:check": "prettier --check .",
+    "generate:fixture": "node --import tsx fixtures/glyph-agent-swarm-demo/generate.ts",
+    "lint": "pnpm --recursive --if-present lint",
+    "pipeline:demo": "pnpm --filter @glyph/worker pipeline:demo",
+    "setup:browsers": "playwright install chromium",
+    "test": "vitest run --exclude '**/*.integration.test.ts'",
+    "test:integration": "vitest run --config vitest.integration.config.ts",
+    "test:e2e": "playwright test",
+    "typecheck": "tsc --noEmit -p tsconfig.json && pnpm --recursive --if-present typecheck",
+    "verify:architecture": "node --import tsx scripts/verify-architecture.ts",
+    "verify": "pnpm format:check && pnpm lint && pnpm typecheck && pnpm test && pnpm test:integration && pnpm eval && pnpm verify:architecture && pnpm build && pnpm test:e2e"
   },
   "devDependencies": {
     "@eslint/js": "^9.35.0",
+    "@axe-core/playwright": "^4.10.2",
+    "@playwright/test": "^1.55.0",
     "@types/node": "^22.18.0",
     "@types/pg": "^8.15.5",
     "eslint": "^9.35.0",
+    "eslint-config-next": "^16.2.0",
+    "pdf-lib": "^1.17.1",
     "prettier": "^3.6.2",
     "tsx": "^4.20.5",
     "typescript": "^5.9.2",
     "typescript-eslint": "^8.42.0",
-    "vitest": "^3.2.4"
+    "vitest": "^3.2.4",
+    "@vitest/coverage-v8": "^3.2.4"
   }
 }

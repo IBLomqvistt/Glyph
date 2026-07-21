@@ -1,0 +1,872 @@
+{
+  "disclosure": "Synthetic Glyph demonstration — not a real paper or investment analysis.",
+  "paper": {
+    "schemaVersion": 1,
+    "id": "paper-agent-swarm-demo",
+    "title": "Agent Swarm: A Synthetic Study of Parallel Work",
+    "authors": ["Glyph Fixture Team"],
+    "lab": "Glyph Synthetic Lab",
+    "canonicalUrl": null,
+    "sourceType": "SYNTHETIC_DEMO",
+    "topicLabels": ["Agent systems", "Learning systems"],
+    "mechanismLabels": ["Parallel orchestration", "Shared cache"],
+    "difficulty": "INTERMEDIATE",
+    "selectionRationale": "Selected to demonstrate evidence-linked teaching without representing a real paper.",
+    "syntheticDisclosure": "Synthetic Glyph demonstration — not a real paper or investment analysis."
+  },
+  "version": {
+    "schemaVersion": 1,
+    "id": "glyph-agent-swarm-demo-v1",
+    "paperId": "paper-agent-swarm-demo",
+    "versionLabel": "synthetic-v1",
+    "checksumSha256": "5abee17781fa168cd5b85a5e3d91c3d0ed06f58b6bfc7d3e288fe6d2637c3329",
+    "licenceStatus": "SYNTHETIC",
+    "publicationDate": "2026-07-21",
+    "revisionDate": "2026-07-21",
+    "pageCount": 3,
+    "assetPath": "/demo/glyph-agent-swarm-demo.pdf"
+  },
+  "report": {
+    "schemaVersion": 1,
+    "id": "report-agent-swarm-demo",
+    "paperVersionId": "glyph-agent-swarm-demo-v1",
+    "slug": "agent-swarm-demo",
+    "status": "READY_FOR_EDITOR",
+    "readingTimeMinutes": 12,
+    "sectionIds": [
+      "section-sentence",
+      "section-visual",
+      "section-summary",
+      "section-background",
+      "section-mechanism",
+      "section-technical",
+      "section-frontier",
+      "section-trade",
+      "section-watch",
+      "section-concepts"
+    ],
+    "claimIds": [
+      "claim-decomposition",
+      "claim-concurrency",
+      "claim-delay-calculation",
+      "claim-scheduling-interpretation",
+      "claim-no-trade",
+      "claim-cache",
+      "claim-retry",
+      "claim-baseline",
+      "claim-cost-savings",
+      "claim-weights-contradicted"
+    ],
+    "conceptIds": [
+      "concept-work-packet",
+      "concept-shared-cache",
+      "concept-kv-cache",
+      "concept-mla",
+      "concept-idempotency"
+    ],
+    "visualIds": [
+      "visual-hero",
+      "visual-shared-cache",
+      "visual-retry",
+      "visual-work-packet"
+    ],
+    "createdAt": "2026-07-21T00:00:00.000Z",
+    "updatedAt": "2026-07-21T00:00:00.000Z",
+    "editorApproval": null
+  },
+  "sections": [
+    {
+      "schemaVersion": 1,
+      "id": "section-sentence",
+      "reportId": "report-agent-swarm-demo",
+      "kind": "PAPER_IN_ONE_SENTENCE",
+      "depth": "FIVE_MINUTES",
+      "order": 0,
+      "blocks": [
+        {
+          "id": "section-sentence-block",
+          "heading": "Paper in one sentence",
+          "body": "A synthetic system splits one request into concurrent work packets, then verifies their merge.",
+          "claimIds": ["claim-decomposition", "claim-concurrency"],
+          "evidenceSpanIds": ["evidence-decompose", "evidence-concurrency"]
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "section-visual",
+      "reportId": "report-agent-swarm-demo",
+      "kind": "VISUAL_ABSTRACT",
+      "depth": "FIVE_MINUTES",
+      "order": 1,
+      "blocks": [
+        {
+          "id": "section-visual-block",
+          "heading": "Visual abstract",
+          "body": "The baseline is sequential; the proposal separates decomposition, concurrent execution, and verification.",
+          "claimIds": ["claim-concurrency", "claim-baseline"],
+          "evidenceSpanIds": ["evidence-concurrency", "evidence-baseline"]
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "section-summary",
+      "reportId": "report-agent-swarm-demo",
+      "kind": "EXECUTIVE_SUMMARY",
+      "depth": "FIVE_MINUTES",
+      "order": 2,
+      "blocks": [
+        {
+          "id": "section-summary-block",
+          "heading": "What matters",
+          "body": "The mechanism changes scheduling in the fixture. It does not establish production economics.",
+          "claimIds": ["claim-scheduling-interpretation", "claim-cost-savings"],
+          "evidenceSpanIds": ["evidence-weights"]
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "section-background",
+      "reportId": "report-agent-swarm-demo",
+      "kind": "BACKGROUND",
+      "depth": "MECHANISM",
+      "order": 3,
+      "blocks": [
+        {
+          "id": "section-background-block",
+          "heading": "Background",
+          "body": "Parallel work is only safe when packets are bounded and their effects can be merged.",
+          "claimIds": ["claim-decomposition"],
+          "evidenceSpanIds": ["evidence-decompose"]
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "section-mechanism",
+      "reportId": "report-agent-swarm-demo",
+      "kind": "MECHANISM",
+      "depth": "MECHANISM",
+      "order": 4,
+      "blocks": [
+        {
+          "id": "section-mechanism-block",
+          "heading": "Mechanism",
+          "body": "Four workers read shared context, write separate partitions, and converge through a verified merge.",
+          "claimIds": ["claim-concurrency", "claim-cache"],
+          "evidenceSpanIds": ["evidence-concurrency", "evidence-cache"]
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "section-technical",
+      "reportId": "report-agent-swarm-demo",
+      "kind": "TECHNICAL_EVIDENCE",
+      "depth": "EVIDENCE",
+      "order": 5,
+      "blocks": [
+        {
+          "id": "section-technical-block",
+          "heading": "Technical evidence",
+          "body": "The fixture records 90 synthetic ms for the baseline and 20 synthetic ms for the parallel path.",
+          "claimIds": ["claim-delay-calculation"],
+          "evidenceSpanIds": ["evidence-delay"]
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "section-frontier",
+      "reportId": "report-agent-swarm-demo",
+      "kind": "AI_FRONTIER",
+      "depth": "MECHANISM",
+      "order": 6,
+      "blocks": [
+        {
+          "id": "section-frontier-block",
+          "heading": "AI frontier relevance",
+          "body": "The fixture is useful for studying orchestration boundaries, but it makes no claim about model capability.",
+          "claimIds": [
+            "claim-scheduling-interpretation",
+            "claim-weights-contradicted"
+          ],
+          "evidenceSpanIds": ["evidence-weights"]
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "section-trade",
+      "reportId": "report-agent-swarm-demo",
+      "kind": "AI_TRADE",
+      "depth": "FIVE_MINUTES",
+      "order": 7,
+      "blocks": [
+        {
+          "id": "section-trade-block",
+          "heading": "Investment interpretation",
+          "body": "No direct trade implication: the fixture has no production cost, demand, company, or security evidence.",
+          "claimIds": ["claim-no-trade"],
+          "evidenceSpanIds": ["evidence-no-market", "evidence-no-trade"]
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "section-watch",
+      "reportId": "report-agent-swarm-demo",
+      "kind": "WATCH_NEXT",
+      "depth": "EVIDENCE",
+      "order": 8,
+      "blocks": [
+        {
+          "id": "section-watch-block",
+          "heading": "What to watch next",
+          "body": "A real evaluation would need measured cost, failure rates, workload conditions, and a comparable sequential baseline.",
+          "claimIds": ["claim-cost-savings"],
+          "evidenceSpanIds": []
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "section-concepts",
+      "reportId": "report-agent-swarm-demo",
+      "kind": "CONCEPTS_AND_SOURCES",
+      "depth": "EVIDENCE",
+      "order": 9,
+      "blocks": [
+        {
+          "id": "section-concepts-block",
+          "heading": "Concepts and sources",
+          "body": "Explore work packets, shared caches, idempotency, KV caches, and multi-head latent attention with the synthetic source open.",
+          "claimIds": ["claim-cache", "claim-retry"],
+          "evidenceSpanIds": ["evidence-cache", "evidence-retry"]
+        }
+      ]
+    }
+  ],
+  "claims": [
+    {
+      "schemaVersion": 1,
+      "id": "claim-decomposition",
+      "reportId": "report-agent-swarm-demo",
+      "text": "The synthetic system decomposes one request into independent work packets.",
+      "kind": "PAPER_FACT",
+      "material": true,
+      "supportStatus": "SUPPORTED",
+      "evidenceSpanIds": ["evidence-decompose"]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "claim-concurrency",
+      "reportId": "report-agent-swarm-demo",
+      "text": "The fixture authors describe four concurrent workers and a verified merge.",
+      "kind": "AUTHOR_CLAIM",
+      "material": true,
+      "supportStatus": "SUPPORTED",
+      "evidenceSpanIds": ["evidence-concurrency"]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "claim-delay-calculation",
+      "reportId": "report-agent-swarm-demo",
+      "text": "Glyph calculates a 4.5× synthetic delay ratio from 90 ms divided by 20 ms.",
+      "kind": "GLYPH_CALCULATION",
+      "material": true,
+      "supportStatus": "SUPPORTED",
+      "evidenceSpanIds": ["evidence-delay"]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "claim-scheduling-interpretation",
+      "reportId": "report-agent-swarm-demo",
+      "text": "Glyph interprets the change as orchestration behavior, not a change to model weights.",
+      "kind": "GLYPH_INTERPRETATION",
+      "material": true,
+      "supportStatus": "SUPPORTED",
+      "evidenceSpanIds": ["evidence-weights"]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "claim-no-trade",
+      "reportId": "report-agent-swarm-demo",
+      "text": "No direct trade implication can be supported by this synthetic demonstration.",
+      "kind": "INVESTMENT_HYPOTHESIS",
+      "material": true,
+      "supportStatus": "SUPPORTED",
+      "evidenceSpanIds": ["evidence-no-market", "evidence-no-trade"]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "claim-cache",
+      "reportId": "report-agent-swarm-demo",
+      "text": "Workers share reads while writes remain partitioned.",
+      "kind": "PAPER_FACT",
+      "material": true,
+      "supportStatus": "SUPPORTED",
+      "evidenceSpanIds": ["evidence-cache"]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "claim-retry",
+      "reportId": "report-agent-swarm-demo",
+      "text": "The fixture surfaces failed packets after one retry.",
+      "kind": "AUTHOR_CLAIM",
+      "material": true,
+      "supportStatus": "SUPPORTED",
+      "evidenceSpanIds": ["evidence-retry"]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "claim-baseline",
+      "reportId": "report-agent-swarm-demo",
+      "text": "The baseline contains nine synthetic steps before aggregation.",
+      "kind": "PAPER_FACT",
+      "material": false,
+      "supportStatus": "SUPPORTED",
+      "evidenceSpanIds": ["evidence-baseline"]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "claim-cost-savings",
+      "reportId": "report-agent-swarm-demo",
+      "text": "The demonstration establishes production cost savings.",
+      "kind": "INVESTMENT_HYPOTHESIS",
+      "material": false,
+      "supportStatus": "INSUFFICIENT_EVIDENCE",
+      "evidenceSpanIds": []
+    },
+    {
+      "schemaVersion": 1,
+      "id": "claim-weights-contradicted",
+      "reportId": "report-agent-swarm-demo",
+      "text": "Workers modify the underlying model weights.",
+      "kind": "AUTHOR_CLAIM",
+      "material": false,
+      "supportStatus": "CONTRADICTED",
+      "evidenceSpanIds": ["evidence-weights"]
+    }
+  ],
+  "evidenceSpans": [
+    {
+      "schemaVersion": 1,
+      "id": "evidence-decompose",
+      "paperVersionId": "glyph-agent-swarm-demo-v1",
+      "pageNumber": 1,
+      "section": "Abstract",
+      "exactText": "The system decomposes a complex request into independent work packets.",
+      "boxes": [
+        {
+          "x": 0.11764705882352941,
+          "y": 0.22853535353535354,
+          "width": 0.5384967320261438,
+          "height": 0.018750000000000003
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "evidence-concurrency",
+      "paperVersionId": "glyph-agent-swarm-demo-v1",
+      "pageNumber": 1,
+      "section": "Abstract",
+      "exactText": "Four workers execute packets concurrently before a verified merge.",
+      "boxes": [
+        {
+          "x": 0.11764705882352941,
+          "y": 0.2689393939393939,
+          "width": 0.4843235294117647,
+          "height": 0.018750000000000003
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "evidence-delay",
+      "paperVersionId": "glyph-agent-swarm-demo-v1",
+      "pageNumber": 1,
+      "section": "Synthetic measurement",
+      "exactText": "Sequential delay is 90 synthetic ms; parallel delay is 20 synthetic ms.",
+      "boxes": [
+        {
+          "x": 0.11764705882352941,
+          "y": 0.37247474747474746,
+          "width": 0.49825326797385616,
+          "height": 0.018750000000000003
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "evidence-cache",
+      "paperVersionId": "glyph-agent-swarm-demo-v1",
+      "pageNumber": 2,
+      "section": "Mechanism",
+      "exactText": "Each worker reads a shared cache but writes only to its assigned partition.",
+      "boxes": [
+        {
+          "x": 0.11764705882352941,
+          "y": 0.2159090909090909,
+          "width": 0.5308937908496731,
+          "height": 0.018750000000000003
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "evidence-retry",
+      "paperVersionId": "glyph-agent-swarm-demo-v1",
+      "pageNumber": 2,
+      "section": "Failure behavior",
+      "exactText": "Failed packets are retried once, then surfaced without a plausible fallback.",
+      "boxes": [
+        {
+          "x": 0.11764705882352941,
+          "y": 0.31691919191919193,
+          "width": 0.5322777777777777,
+          "height": 0.018750000000000003
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "evidence-weights",
+      "paperVersionId": "glyph-agent-swarm-demo-v1",
+      "pageNumber": 2,
+      "section": "Scope",
+      "exactText": "Parallel execution changes scheduling in this demo, not model weights.",
+      "boxes": [
+        {
+          "x": 0.11764705882352941,
+          "y": 0.41792929292929293,
+          "width": 0.5129019607843136,
+          "height": 0.018750000000000003
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "evidence-no-market",
+      "paperVersionId": "glyph-agent-swarm-demo-v1",
+      "pageNumber": 3,
+      "section": "Limitations",
+      "exactText": "This synthetic study does not measure production cost or market demand.",
+      "boxes": [
+        {
+          "x": 0.11764705882352941,
+          "y": 0.2159090909090909,
+          "width": 0.5294918300653595,
+          "height": 0.018750000000000003
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "evidence-no-trade",
+      "paperVersionId": "glyph-agent-swarm-demo-v1",
+      "pageNumber": 3,
+      "section": "Limitations",
+      "exactText": "No company, security, or trade is evaluated in this demonstration.",
+      "boxes": [
+        {
+          "x": 0.11764705882352941,
+          "y": 0.2563131313131313,
+          "width": 0.4697467320261437,
+          "height": 0.018750000000000003
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "evidence-baseline",
+      "paperVersionId": "glyph-agent-swarm-demo-v1",
+      "pageNumber": 3,
+      "section": "Baseline",
+      "exactText": "A sequential baseline completes nine synthetic steps before aggregation.",
+      "boxes": [
+        {
+          "x": 0.11764705882352941,
+          "y": 0.37752525252525254,
+          "width": 0.5202892156862745,
+          "height": 0.018750000000000003
+        }
+      ]
+    }
+  ],
+  "concepts": [
+    {
+      "schemaVersion": 1,
+      "id": "concept-work-packet",
+      "name": "Work packet",
+      "shortDefinition": "A bounded unit of work with an explicit result.",
+      "contextualExplanation": "In this fixture, one request is split into independent packets before execution.",
+      "relevance": "Boundaries determine which work can safely proceed in parallel.",
+      "analogy": "Like assigning separate chapters to editors before one final review.",
+      "visualSpecId": "visual-work-packet",
+      "canonicalSource": null,
+      "relatedConceptIds": ["concept-idempotency"]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "concept-shared-cache",
+      "name": "Shared cache",
+      "shortDefinition": "A store that several workers can read from.",
+      "contextualExplanation": "The demo uses shared reads and partitioned writes to keep worker effects separate.",
+      "relevance": "Coordination rules affect correctness as much as concurrency.",
+      "analogy": "A common reference shelf with a separate notebook for each researcher.",
+      "visualSpecId": "visual-shared-cache",
+      "canonicalSource": null,
+      "relatedConceptIds": ["concept-kv-cache"]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "concept-kv-cache",
+      "name": "KV cache",
+      "shortDefinition": "Stored key and value representations reused during token generation.",
+      "contextualExplanation": "This is a teaching comparison, not a mechanism claimed by the synthetic paper.",
+      "relevance": "It shows how reuse can reduce repeated computation while increasing stored state.",
+      "analogy": "Keeping indexed notes beside you instead of rereading every source page.",
+      "visualSpecId": "visual-shared-cache",
+      "canonicalSource": null,
+      "relatedConceptIds": ["concept-mla"]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "concept-mla",
+      "name": "Multi-head latent attention",
+      "shortDefinition": "An attention design that compresses cached representations.",
+      "contextualExplanation": "Included only as a contextual teaching example for cache trade-offs.",
+      "relevance": "It helps distinguish orchestration concurrency from model-architecture efficiency.",
+      "analogy": "A compact index that can reconstruct several views of the same notes.",
+      "visualSpecId": null,
+      "canonicalSource": null,
+      "relatedConceptIds": ["concept-kv-cache"]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "concept-idempotency",
+      "name": "Idempotency",
+      "shortDefinition": "Repeating the same operation does not duplicate its effect.",
+      "contextualExplanation": "Each demo pipeline stage has a stable key so safe retries reuse completed work.",
+      "relevance": "Long-running analysis must recover without duplicating reports or distribution.",
+      "analogy": "A stamped ticket that cannot be counted twice.",
+      "visualSpecId": null,
+      "canonicalSource": null,
+      "relatedConceptIds": ["concept-work-packet"]
+    }
+  ],
+  "visuals": [
+    {
+      "schemaVersion": 1,
+      "id": "visual-hero",
+      "title": "Sequential baseline and parallel proposal",
+      "purpose": "Compare the exact synthetic execution structures.",
+      "nodes": [
+        {
+          "id": "base-input",
+          "label": "Request",
+          "kind": "INPUT",
+          "value": null,
+          "unit": null
+        },
+        {
+          "id": "base-steps",
+          "label": "9 sequential steps",
+          "kind": "PROCESS",
+          "value": 9,
+          "unit": "steps"
+        },
+        {
+          "id": "parallel-split",
+          "label": "Split into packets",
+          "kind": "PROCESS",
+          "value": null,
+          "unit": null
+        },
+        {
+          "id": "parallel-workers",
+          "label": "4 concurrent workers",
+          "kind": "PROCESS",
+          "value": 4,
+          "unit": "workers"
+        },
+        {
+          "id": "verified-merge",
+          "label": "Verified merge",
+          "kind": "OUTPUT",
+          "value": null,
+          "unit": null
+        }
+      ],
+      "edges": [
+        {
+          "id": "hero-edge-1",
+          "from": "base-input",
+          "to": "base-steps",
+          "label": "baseline",
+          "kind": "COMPARE"
+        },
+        {
+          "id": "hero-edge-2",
+          "from": "base-input",
+          "to": "parallel-split",
+          "label": "proposal",
+          "kind": "FLOW"
+        },
+        {
+          "id": "hero-edge-3",
+          "from": "parallel-split",
+          "to": "parallel-workers",
+          "label": null,
+          "kind": "FLOW"
+        },
+        {
+          "id": "hero-edge-4",
+          "from": "parallel-workers",
+          "to": "verified-merge",
+          "label": null,
+          "kind": "FLOW"
+        }
+      ],
+      "groups": [
+        {
+          "id": "group-baseline",
+          "label": "Sequential baseline",
+          "nodeIds": ["base-steps"]
+        },
+        {
+          "id": "group-proposal",
+          "label": "Parallel proposal",
+          "nodeIds": ["parallel-split", "parallel-workers", "verified-merge"]
+        }
+      ],
+      "claimIds": ["claim-concurrency", "claim-baseline"],
+      "evidenceSpanIds": ["evidence-concurrency", "evidence-baseline"],
+      "layout": "BASELINE_COMPARE"
+    },
+    {
+      "schemaVersion": 1,
+      "id": "visual-shared-cache",
+      "title": "Shared reads and partitioned writes",
+      "purpose": "Show information movement and stored state.",
+      "nodes": [
+        {
+          "id": "cache",
+          "label": "Shared read cache",
+          "kind": "STORE",
+          "value": null,
+          "unit": null
+        },
+        {
+          "id": "worker-a",
+          "label": "Worker A",
+          "kind": "PROCESS",
+          "value": null,
+          "unit": null
+        },
+        {
+          "id": "worker-b",
+          "label": "Worker B",
+          "kind": "PROCESS",
+          "value": null,
+          "unit": null
+        },
+        {
+          "id": "partition-a",
+          "label": "Write partition A",
+          "kind": "STORE",
+          "value": null,
+          "unit": null
+        },
+        {
+          "id": "partition-b",
+          "label": "Write partition B",
+          "kind": "STORE",
+          "value": null,
+          "unit": null
+        }
+      ],
+      "edges": [
+        {
+          "id": "cache-a",
+          "from": "cache",
+          "to": "worker-a",
+          "label": "read",
+          "kind": "FLOW"
+        },
+        {
+          "id": "cache-b",
+          "from": "cache",
+          "to": "worker-b",
+          "label": "read",
+          "kind": "FLOW"
+        },
+        {
+          "id": "write-a",
+          "from": "worker-a",
+          "to": "partition-a",
+          "label": "write",
+          "kind": "STORE"
+        },
+        {
+          "id": "write-b",
+          "from": "worker-b",
+          "to": "partition-b",
+          "label": "write",
+          "kind": "STORE"
+        }
+      ],
+      "groups": [],
+      "claimIds": ["claim-cache"],
+      "evidenceSpanIds": ["evidence-cache"],
+      "layout": "LEFT_TO_RIGHT"
+    },
+    {
+      "schemaVersion": 1,
+      "id": "visual-retry",
+      "title": "Explicit retry and failure state",
+      "purpose": "Show that missing results never receive a plausible fallback.",
+      "nodes": [
+        {
+          "id": "attempt",
+          "label": "Packet attempt",
+          "kind": "INPUT",
+          "value": null,
+          "unit": null
+        },
+        {
+          "id": "retry",
+          "label": "One retry",
+          "kind": "PROCESS",
+          "value": 1,
+          "unit": "retry"
+        },
+        {
+          "id": "failure",
+          "label": "Surface failure",
+          "kind": "OUTPUT",
+          "value": null,
+          "unit": null
+        }
+      ],
+      "edges": [
+        {
+          "id": "retry-edge",
+          "from": "attempt",
+          "to": "retry",
+          "label": "failed",
+          "kind": "FLOW"
+        },
+        {
+          "id": "failure-edge",
+          "from": "retry",
+          "to": "failure",
+          "label": "failed again",
+          "kind": "DISCARD"
+        }
+      ],
+      "groups": [],
+      "claimIds": ["claim-retry"],
+      "evidenceSpanIds": ["evidence-retry"],
+      "layout": "LEFT_TO_RIGHT"
+    },
+    {
+      "schemaVersion": 1,
+      "id": "visual-work-packet",
+      "title": "One request, bounded packets",
+      "purpose": "Explain the work-packet concept.",
+      "nodes": [
+        {
+          "id": "request",
+          "label": "Request",
+          "kind": "INPUT",
+          "value": null,
+          "unit": null
+        },
+        {
+          "id": "packet",
+          "label": "Independent packet",
+          "kind": "PROCESS",
+          "value": null,
+          "unit": null
+        },
+        {
+          "id": "result",
+          "label": "Explicit result",
+          "kind": "OUTPUT",
+          "value": null,
+          "unit": null
+        }
+      ],
+      "edges": [
+        {
+          "id": "packet-edge",
+          "from": "request",
+          "to": "packet",
+          "label": "decompose",
+          "kind": "FLOW"
+        },
+        {
+          "id": "result-edge",
+          "from": "packet",
+          "to": "result",
+          "label": "execute",
+          "kind": "FLOW"
+        }
+      ],
+      "groups": [],
+      "claimIds": ["claim-decomposition"],
+      "evidenceSpanIds": ["evidence-decompose"],
+      "layout": "LEFT_TO_RIGHT"
+    }
+  ],
+  "newsletter": {
+    "reportId": "report-agent-swarm-demo",
+    "bullets": [
+      "Claim: the synthetic study proposes splitting one request into bounded work packets.",
+      "Who and why now: Glyph Synthetic Lab created this controlled fixture to test source-linked teaching safely.",
+      "Mechanism: four workers execute separate packets before a verified merge.",
+      "AI frontier relevance: the fixture demonstrates orchestration boundaries, not model capability or production economics.",
+      "Investor relevance and concepts: no direct trade implication; it teaches work packets, shared caches, and idempotency."
+    ]
+  },
+  "socialPreview": {
+    "hook": "What changes when one synthetic task becomes four bounded work packets?",
+    "observations": [
+      "The fixture separates decomposition from execution.",
+      "A verified merge remains mandatory after concurrent work.",
+      "Production cost and market demand are not measured."
+    ],
+    "sourcePath": "/demo/glyph-agent-swarm-demo.pdf",
+    "reportPath": "/reports/agent-swarm-demo",
+    "disclaimer": "Synthetic demonstration only. No investment conclusion is supported."
+  },
+  "answers": [
+    {
+      "schemaVersion": 1,
+      "id": "answer-worker-count",
+      "reportId": "report-agent-swarm-demo",
+      "question": "How many workers run concurrently?",
+      "outcome": "ANSWER",
+      "answerText": "The synthetic fixture states that four workers execute concurrently.",
+      "evidenceSpanIds": ["evidence-concurrency"],
+      "generatedAt": "2026-07-21T00:00:00.000Z",
+      "validatedAt": "2026-07-21T00:00:00.000Z"
+    },
+    {
+      "schemaVersion": 1,
+      "id": "answer-market-impact",
+      "reportId": "report-agent-swarm-demo",
+      "question": "Which public company benefits most?",
+      "outcome": "INSUFFICIENT_EVIDENCE",
+      "answerText": null,
+      "evidenceSpanIds": [],
+      "generatedAt": "2026-07-21T00:00:00.000Z",
+      "validatedAt": "2026-07-21T00:00:00.000Z"
+    }
+  ]
+}

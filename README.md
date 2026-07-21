@@ -1,192 +1,92 @@
 # Glyph
 
-**Frontier AI research for investors, with the evidence left attached.**
+Glyph is a source-linked research product for investors and finance-native readers who need to understand an important AI paper quickly without losing the evidence behind the analysis. The product turns a selected paper into a concise editorial brief, concept explanations, market implications, and claim-level links back to the exact source pages.
 
-Glyph is a paper-intelligence workspace that turns dense AI research into clear
-technical mechanisms, source-linked claims, and carefully bounded market
-context. It is designed for investors and technical decision-makers who need a
-fast explanation without losing the path back to the original source.
+This repository contains the local V1 and its worked Kimi K3 example. The demo is deterministic and does not require credentials or make live provider calls by default.
 
-![Glyph landing experience](artifacts/actual-glyph-home.png)
+## Use Glyph
 
-## What Glyph does
-
-Glyph follows an evidence-first editorial loop:
-
-1. scan approved frontier-research sources;
-2. classify and rank a small, explainable set of papers;
-3. let an editor choose the paper worth covering;
-4. extract claims, limitations, contradictions, and exact evidence spans;
-5. explain the work at progressive levels of depth;
-6. connect technical changes to sourced and timestamped market context;
-7. run integrity checks and require editorial approval before publication;
-8. learn from explicit reader feedback.
-
-The central rule is simple: a material claim must link to known evidence, or it
-must be marked as having insufficient evidence. Glyph is research tooling, not
-investment advice, and it does not generate trade recommendations.
-
-## Try the current version
-
-### Requirements
+Requirements:
 
 - Node.js 22 or newer
-- pnpm 11.9
+- pnpm 11.9.0
 
-### Run the web experience
+Start the product:
 
 ```bash
 pnpm install
 pnpm dev
 ```
 
-Open [http://127.0.0.1:4173](http://127.0.0.1:4173).
+Open [http://localhost:3000](http://localhost:3000), choose **Explore the demo**, and continue through the local demo login. No credentials are sent to an identity provider.
 
-The shortest product tour is:
+The primary product journey is:
 
-1. start on the animated landing page;
-2. choose **Enter Glyph** to open the sign-in handoff;
-3. sign in or choose **Explore the Glyph workspace** to open Discover;
-4. open the selected paper, then move through Brief, Evidence, Concepts, and
-   Market;
-5. use Review to inspect publication blockers and Feedback to record reader
-   preferences.
-
-You can also open the worked example directly:
-
-- Models: [http://127.0.0.1:4173/layers/models](http://127.0.0.1:4173/layers/models)
-- Evidence Reader: [http://127.0.0.1:4173/reader/kimi-k3-open-frontier-intelligence](http://127.0.0.1:4173/reader/kimi-k3-open-frontier-intelligence)
-
-The primary product workspace has eight views—Discover, Paper, Brief, Evidence,
-Concepts, Market, Review, and Feedback—and begins at
-`http://127.0.0.1:4173/#/discover`. These views deliberately use a clearly
-labelled synthetic paper fixture. The separate Kimi K3 routes remain available
-as a worked example using an attached first-party launch-blog printout and a
-provisional Glyph analysis; that analysis has not been independently validated
-and is not presented as Kimi's technical report.
-
-### Build and verify
-
-```bash
-pnpm test:frontend
-pnpm build
-pnpm preview
-```
-
-`pnpm preview` serves the static production output at
-[http://127.0.0.1:4173](http://127.0.0.1:4173).
+1. **Landing (`/`)** — understand the product promise and enter the demo.
+2. **Home (`/home`)** — scan today's selected research and its significance.
+3. **Categories (`/layers/[slug]`)** — browse Models, Agents, Chips & Systems, Data, and Safety & Alignment. Categories without approved papers show honest empty states.
+4. **Evidence reader (`/reader/kimi-k3`)** — read the report beside the source document. Selecting a cited claim opens the matching page and highlight. Report tabs separate the executive summary, technical concepts, causal evidence, and economics.
+5. **Full report (`/reports/kimi-k3`)** — inspect the longer investment-oriented analysis and source register.
+6. **Library and editor (`/library`, `/editor`)** — review saved concepts and the deterministic editorial pipeline. Editor actions are protected by the server-validated demo role.
 
 ## Product components
 
-| Component | What it provides | Main location |
-| --- | --- | --- |
-| Landing and sign-in | Product story, interactive digest preview, and demo entry | `index.html`, `app.js`, `styles.css` |
-| Models catalogue | Editorial labels, source boundaries, abstracts, and explainable scoring | `src/models-catalog.mjs`, `packages/recommendation` |
-| Evidence Reader | Progressive analysis, claim selection, exact source pages, and evidence highlighting | `src/kimi-reader.mjs`, `fixtures/evidence`, `content/kimi-k3` |
-| Research workspace | Discover-to-feedback prototype covering the complete editorial journey | `src/demo-content.mjs`, `src/routes.mjs` |
-| API | Fastify REST/OpenAPI surface for sources, papers, workflows, reviews, and publication | `apps/api` |
-| Worker | Idempotent asynchronous pipeline and daily source-scan entry point | `apps/worker` |
-| Domain and application core | Evidence schemas, publication invariants, use cases, and provider-neutral ports | `packages/domain`, `packages/application` |
-| Persistence | In-memory local adapter, PostgreSQL adapter, schema, and ordered migrations | `packages/database` |
-| GPT-5.6 boundary | Structured Responses API transport, evidence drafter, and eight semantic agents | `packages/openai` |
+Glyph is a pnpm monorepo with explicit boundaries between product UI, domain logic, workflow coordination, and providers.
 
-The backend is a modular TypeScript monolith. Its dependency direction is
-`api/worker -> application -> domain`; database and model providers sit behind
-application interfaces so that editorial rules remain independent from a
-specific vendor.
+| Component       | Location                                 | Responsibility                                                                                                                                 |
+| --------------- | ---------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| Web product     | `apps/web`                               | Next.js App Router UI, landing, demo access, research home, categories, split evidence reader, reports, library, editor, and previews          |
+| Research worker | `apps/worker`                            | Idempotent local pipeline stages: discover, classify, rank, select, parse, extract evidence, generate outline/report/visuals, and automated QA |
+| Domain          | `packages/domain`                        | Versioned schemas for papers, reports, claims, evidence spans, concepts, visuals, generations, and pipeline runs                               |
+| Application     | `packages/application`                   | Use cases and provider-neutral ports for repositories, AI generation, assets, auth, subscriptions, distribution, and jobs                      |
+| AI adapters     | `packages/ai`                            | Deterministic demo gateway plus opt-in OpenAI Responses API and GPT Image adapters with strict structured outputs                              |
+| Persistence     | `packages/database`                      | Provider-neutral PostgreSQL/Drizzle schema and adapters; the running demo uses in-memory repositories                                          |
+| Diagrams        | `packages/diagrams`                      | Deterministic analytical visuals that remain inspectable and reproducible                                                                      |
+| Shared UI       | `packages/ui`                            | Reusable presentation primitives                                                                                                               |
+| Kimi K3 fixture | `fixtures/kimi-k3` and `apps/web/public` | The worked paper, report, exact evidence mapping, and deterministic page renders used by the product                                           |
 
-## Run the backend
+The source/evidence boundary is intentional: an evidence span belongs to one immutable paper version, invalid mappings fail closed, and generated analytical claims remain distinguishable from source facts and author claims.
 
-For ephemeral local development, provide a long editor token and enable the
-in-memory adapter:
+## API and provider connections
 
-```bash
-export GLYPH_EDITOR_TOKEN="replace-with-a-long-random-secret"
-export GLYPH_ALLOW_IN_MEMORY=true
-pnpm dev:api
-```
+All external actions are disabled by default. Copy `.env.example` only when developing an explicitly approved integration.
 
-The API runs at [http://127.0.0.1:4000](http://127.0.0.1:4000), with OpenAPI
-documentation at [http://127.0.0.1:4000/docs](http://127.0.0.1:4000/docs).
-Editor mutations require both `Authorization: Bearer <GLYPH_EDITOR_TOKEN>` and
-an `x-glyph-actor-id` header.
+| Connection                     | Used by                                                               | Product purpose                                                                                             | Local V1 status                                                                                                             |
+| ------------------------------ | --------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
+| OpenAI Responses API           | `OpenAiResponsesGateway` in `packages/ai`                             | Structured classification, evidence extraction, report synthesis, report critique, and evidence-bounded Q&A | Implemented behind `GLYPH_ENABLE_LIVE_AI`; the demo uses `DeterministicAiGateway`                                           |
+| OpenAI Image API / GPT Image 2 | `OpenAiImageGateway`, called by the editor illustration-draft service | Optional non-semantic editorial illustrations only; never evidence, charts, labels, or analytical diagrams  | Implemented behind both editor authorization and `GLYPH_ENABLE_LIVE_IMAGE_GENERATION`; every result is pending human review |
+| Stripe API                     | `StripeSubscriptionGateway` in the web server provider layer          | Future subscription checkout and access status                                                              | Adapter shell only; `GLYPH_ENABLE_LIVE_BILLING` is off and checkout creation fails closed                                   |
+| PostgreSQL                     | `packages/database`                                                   | Future durable papers, reports, evidence, generations, and pipeline records                                 | Schema/adapters exist; no managed provider is selected and the demo remains in memory                                       |
+| Authentication                 | `DemoAuthGateway` and server actions                                  | Visitor, subscriber-demo, and editor-demo roles                                                             | Local cookie-based demo only; no production identity provider is connected                                                  |
+| Email and social distribution  | `PreviewOnlyDistributionGateway`                                      | Newsletter and social-post previews after editorial approval                                                | Preview only; sending and publishing are disabled                                                                           |
+| Paper/PDF assets               | local fixture store and `apps/web/public`                             | Exact source pages, report HTML, and reader highlights                                                      | Local deterministic assets; no external storage provider is connected                                                       |
+| Background jobs                | `LocalJobRunner` in `apps/worker`                                     | Retryable, idempotent research-pipeline execution                                                           | Local deterministic runner; no queue or scheduler provider is connected                                                     |
 
-To use PostgreSQL, set `DATABASE_URL`, leave in-memory mode disabled, and run:
+The runtime AI task names map directly to product responsibilities:
 
-```bash
-pnpm --filter @glyph/database migrate
-pnpm dev:api
-```
+- `classify` — paper triage and topic labeling.
+- `extract-evidence` — creates evidence references tied to the selected paper version.
+- `synthesize-report` — produces a schema-validated report draft.
+- `critique-report` — identifies editorial or evidence blockers before approval.
+- `answer-question` — answers only from supplied evidence spans and returns `INSUFFICIENT_EVIDENCE` when support is missing.
 
-Run the complete repository verification with:
-
-```bash
-pnpm verify
-```
+Live AI requires `GLYPH_ENABLE_LIVE_AI=true`, `OPENAI_API_KEY`, and an explicit `OPENAI_MODEL`. Live illustration drafts additionally require `GLYPH_ENABLE_LIVE_IMAGE_GENERATION=true`; `OPENAI_MODEL_ILLUSTRATION` defaults to `gpt-image-2`. Provider clients are initialized lazily on the server, and presentation components cannot call them directly.
 
 ## How Codex and GPT-5.6 were used
 
-### Codex: product and engineering collaborator
+Codex was used as the development environment and coordination layer for the repository. Separate planning and backend-engineering workstreams translated the PRD into the product journey, monorepo boundaries, implementation, evidence-reader behavior, and acceptance checks. GPT-5.6 supported that engineering work by drafting and reviewing code, tracing product requirements into tests, diagnosing reader and PDF-rendering failures, and running the repository verification loop.
 
-Codex was used directly in the repository to translate the product brief into
-the PRD and acceptance ledger, implement the responsive web experience and
-evidence-first backend, define data and API contracts, add tests and validation,
-and prepare the project documentation and submission workflow. It also helped
-audit the repository against explicit completion gates instead of treating code
-generation as proof that a feature was done.
+Codex/GPT-5.6 are development tools here, not an invisible runtime dependency. The checked-in Kimi K3 experience is deterministic, source-linked, and reviewable without an API key. Any future model-generated output must pass the same versioned schemas, evidence constraints, automated QA, and human editorial approval boundary.
 
-Product positioning, source selection, editorial judgment, evidence approval,
-and the final decision to publish remain human responsibilities. Generated code
-and copy are expected to pass the same review and verification steps as any
-other contribution.
+## Verification
 
-### GPT-5.6: bounded semantic runtime
+Run the full contract:
 
-The running backend is designed to use `gpt-5.6-terra` through the OpenAI
-Responses API for eight narrow semantic roles:
+```bash
+pnpm setup:browsers # once per development machine
+pnpm verify
+```
 
-- paper classification;
-- shortlist ranking;
-- evidence extraction;
-- paper summarization;
-- concept mapping;
-- market-context analysis;
-- integrity review;
-- editorial packaging.
+`pnpm verify` checks formatting, lint, TypeScript, unit tests, integration tests, evidence-integrity evals, architecture boundaries, the production build, and desktop/mobile Playwright flows.
 
-There is also a focused evidence-drafting adapter. It receives a paper title,
-an investor question, and pre-selected evidence spans; it returns a structured
-summary, claims, limitations, and open questions.
-
-The model does not receive publication authority or unrestricted source access.
-Its output is constrained by strict JSON Schema, parsed again with Zod, and
-checked against known paper versions, evidence IDs, pages, concepts, and market
-records. Unknown citations, malformed support states, refusals, and unsupported
-cross-record references fail closed. Responses are requested with `store:
-false`, bounded retries, and explicit timeouts.
-
-The automated tests use a mock transport and do not require a live credential.
-To execute semantic agents, provide `OPENAI_API_KEY` at runtime and optionally
-override `OPENAI_MODEL`. Live workflow execution also requires an
-editor-approved label ontology and real source inputs. No API key belongs in
-the repository.
-
-## Current scope
-
-This repository contains a polished frontend worked example and an implemented,
-tested backend foundation; they are not yet a production end-to-end service.
-Production connectors, a real PDF extraction pipeline, approved source and
-rights policies, gold evaluation sets, market-data adapters, hosted workers,
-and final identity infrastructure remain future work. The evidence and
-publication boundaries are implemented now so those integrations can be added
-without weakening the core trust model.
-
-## Documentation
-
-- [Product requirements](docs/PRD.md)
-- [Project status](docs/PROJECT_STATUS.md)
-- [Backend architecture](docs/BACKEND_ARCHITECTURE.md)
-- [Runtime agent system](docs/RUNTIME_AGENTS.md)
-- [OpenAI integration boundary](docs/OPENAI_INTEGRATION.md)
-- [Paper and evidence handoff](docs/PAPER_HANDOFF.md)
-- [Submission package](submission/README.md)
+See [`PLAN.md`](PLAN.md) for the build plan, [`docs/PRD.md`](docs/PRD.md) for product requirements, [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) for system boundaries, and [`docs/HANDOFF_TODOS.md`](docs/HANDOFF_TODOS.md) for remaining production decisions.

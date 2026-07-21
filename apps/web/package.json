@@ -1,0 +1,32 @@
+{
+  "name": "@glyph/web",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "next build --webpack",
+    "dev": "next dev",
+    "lint": "eslint src --max-warnings 0",
+    "start": "next start",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@glyph/ai": "workspace:*",
+    "@glyph/application": "workspace:*",
+    "@glyph/diagrams": "workspace:*",
+    "@glyph/domain": "workspace:*",
+    "@glyph/ui": "workspace:*",
+    "@tailwindcss/postcss": "^4.3.3",
+    "lucide-react": "^1.25.0",
+    "next": "^16.2.10",
+    "pdfjs-dist": "^6.1.200",
+    "react": "^19.2.7",
+    "react-dom": "^19.2.7",
+    "stripe": "^22.3.2",
+    "tailwindcss": "^4.3.3"
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.0",
+    "@types/react-dom": "^19.2.0"
+  }
+}

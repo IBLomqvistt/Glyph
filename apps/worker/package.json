@@ -4,15 +4,13 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "tsc -p tsconfig.json",
-    "dev": "node --conditions=source --import tsx src/index.ts",
-    "typecheck": "tsc --noEmit -p tsconfig.json"
+    "build": "tsc --noEmit",
+    "lint": "eslint src --max-warnings 0",
+    "pipeline:demo": "node --import tsx src/demo.ts",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@glyph/application": "workspace:*",
     "@glyph/domain": "workspace:*"
-  },
-  "devDependencies": {
-    "@glyph/database": "workspace:*"
   }
 }
