@@ -157,7 +157,7 @@ function renderLanding() {
             <div class="benefit-row"><span>${icon('shield')}</span><p>See what the evidence supports</p></div>
             <div class="benefit-row"><span>${icon('chart')}</span><p>Connect technical change to economic relevance</p></div>
           </div>
-          <a class="enter-glyph entrance-item" href="/login"><span>Enter Glyph</span>${renderMascot({ compact: true })}<b aria-hidden="true">→</b></a>
+          <a class="enter-glyph entrance-item" href="${workedExampleRoutes.product}"><span>Enter Glyph</span>${renderMascot({ compact: true })}<b aria-hidden="true">→</b></a>
           <p class="hero-footnote entrance-item">Built for investors who need to understand the frontier,<br>not merely follow it.</p>
         </div>
         <article class="product-demo" aria-labelledby="digest-title">
@@ -201,7 +201,7 @@ function renderLogin() {
           <button type="submit">Continue to Glyph <span aria-hidden="true">→</span></button>
         </form>
         <div class="login-divider"><span>or</span></div>
-        <a class="demo-login" href="/layers/models">Explore the Kimi K3 demo</a>
+        <a class="demo-login" href="${workedExampleRoutes.product}">Explore the Glyph workspace</a>
         <p class="login-note">By continuing, you agree to use source-linked research responsibly. Glyph does not provide investment advice.</p>
       </section>
       <p class="login-back"><a href="/">← Back to the landing page</a></p>
@@ -995,7 +995,7 @@ function bindInteractions(route) {
         const email = new FormData(event.currentTarget).get('email')
         if (email)
           window.sessionStorage.setItem('glyph-demo-user', String(email))
-        window.location.assign(workedExampleRoutes.models)
+        window.location.assign(workedExampleRoutes.product)
       })
   }
 

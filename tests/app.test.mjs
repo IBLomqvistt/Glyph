@@ -57,6 +57,7 @@ test('route parsing defaults safely and retains evidence query parameters', () =
 test('worked-example paths resolve without changing the eight-view navigation', () => {
   assert.equal(parseAppLocation('/').route, 'landing')
   assert.equal(parseAppLocation('/login').route, 'login')
+  assert.equal(parseAppLocation('/', '#/discover').route, 'discover')
   assert.equal(parseAppLocation('/layers/models').route, 'models')
   const reader = parseAppLocation(
     '/reader/kimi-k3-open-frontier-intelligence',
@@ -72,8 +73,12 @@ test('the first-entry experience preserves the required Glyph narrative and hand
   assert.match(app, /Those who understand/)
   assert.match(app, /Glyph closes the gap/)
   assert.match(app, /Kimi K3: Efficiency at 2\.8T Parameters/)
-  assert.match(app, /href="\/login"/)
-  assert.match(app, /window\.location\.assign\(workedExampleRoutes\.models\)/)
+  assert.match(app, /href="\$\{workedExampleRoutes\.product\}"/)
+  assert.match(app, /window\.location\.assign\(workedExampleRoutes\.product\)/)
+  assert.doesNotMatch(
+    app,
+    /class="enter-glyph[^>]+href="\/(?:login|layers\/models)"/,
+  )
   assert.match(app, /prefers-reduced-motion|data-architecture/)
 })
 

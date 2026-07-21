@@ -45,23 +45,24 @@ Open [http://127.0.0.1:4173](http://127.0.0.1:4173).
 The shortest product tour is:
 
 1. start on the animated landing page;
-2. choose **Enter Glyph**, then **Explore the Kimi K3 demo**;
-3. open the Kimi K3 model card to see its labels and ranking rationale;
-4. enter the Reader and switch between the editorial analysis and source
-   evidence;
-5. select a claim to jump to its supporting page and highlighted passage.
+2. choose **Enter Glyph** to open the Discover research desk;
+3. open the selected paper, then move through Brief, Evidence, Concepts, and
+   Market;
+4. use Review to inspect publication blockers and Feedback to record reader
+   preferences.
 
 You can also open the worked example directly:
 
 - Models: [http://127.0.0.1:4173/layers/models](http://127.0.0.1:4173/layers/models)
 - Evidence Reader: [http://127.0.0.1:4173/reader/kimi-k3-open-frontier-intelligence](http://127.0.0.1:4173/reader/kimi-k3-open-frontier-intelligence)
 
-The repository also includes an eight-view product prototype—Discover, Paper,
-Brief, Evidence, Concepts, Market, Review, and Feedback—at hash routes such as
+The primary product workspace has eight views—Discover, Paper, Brief, Evidence,
+Concepts, Market, Review, and Feedback—and begins at
 `http://127.0.0.1:4173/#/discover`. These views deliberately use a clearly
-labelled synthetic paper fixture. The Kimi K3 routes use an attached first-party
-launch-blog printout and a provisional Glyph analysis; that analysis has not
-been independently validated and is not presented as Kimi's technical report.
+labelled synthetic paper fixture. The separate Kimi K3 routes remain available
+as a worked example using an attached first-party launch-blog printout and a
+provisional Glyph analysis; that analysis has not been independently validated
+and is not presented as Kimi's technical report.
 
 ### Build and verify
 

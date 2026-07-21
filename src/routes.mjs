@@ -14,6 +14,7 @@ export const defaultRoute = 'discover'
 export const workedExampleRoutes = {
   landing: '/',
   login: '/login',
+  product: '/#/discover',
   models: '/layers/models',
   reader: '/reader/kimi-k3-open-frontier-intelligence',
 }
