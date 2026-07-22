@@ -18,7 +18,7 @@ pnpm install
 pnpm dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000), choose **Explore the demo**, and continue through the local demo login. No credentials are sent to an identity provider.
+Open [http://127.0.0.1:3000](http://127.0.0.1:3000), choose **Enter Glyph**, and continue through the local demo login. No credentials are sent to an identity provider.
 
 The primary product journey is:
 
@@ -28,6 +28,8 @@ The primary product journey is:
 4. **Evidence reader (`/reader/kimi-k3`)** — read the report beside the source document. Selecting a cited claim opens the matching page and highlight. Report tabs separate the executive summary, technical concepts, causal evidence, and economics.
 5. **Full report (`/reports/kimi-k3`)** — inspect the longer investment-oriented analysis and source register.
 6. **Library and editor (`/library`, `/editor`)** — review saved concepts and the deterministic editorial pipeline. Editor actions are protected by the server-validated demo role.
+
+The canonical shared workspace for project agents is `/Users/eceozdag/Documents/Glyph`. Product changes developed in another clone or worktree are not considered handed off until they have been reconciled into this repository and verified here.
 
 ## Product components
 

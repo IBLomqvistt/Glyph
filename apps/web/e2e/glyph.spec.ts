@@ -206,6 +206,37 @@ test('public landing leads through explicit demo access to the product', async (
     }),
   ).toBeVisible()
   await expect(page.getByText('Glyph closes the gap.')).toBeVisible()
+  await expect(
+    page.getByRole('link', { name: 'Create demo account' }),
+  ).toHaveCount(0)
+
+  const landingCopy = page.locator('.public-landing-copy')
+  const digestPreview = page.getByRole('article', {
+    name: 'Glyph Kimi K3 digest preview',
+  })
+  await expect(
+    digestPreview.getByRole('heading', {
+      name: '16 of 896: Sparse compute, industrial coordination',
+    }),
+  ).toBeVisible()
+  await expect(
+    digestPreview.locator('.public-expert-grid .is-selected'),
+  ).toHaveCount(16)
+
+  const copyBox = await landingCopy.boundingBox()
+  const digestBox = await digestPreview.boundingBox()
+  expect(copyBox).not.toBeNull()
+  expect(digestBox).not.toBeNull()
+  if ((page.viewportSize()?.width ?? 0) > 820) {
+    expect(digestBox?.x).toBeGreaterThan(
+      (copyBox?.x ?? 0) + (copyBox?.width ?? 0),
+    )
+  } else {
+    expect(digestBox?.y).toBeGreaterThan(
+      (copyBox?.y ?? 0) + (copyBox?.height ?? 0),
+    )
+  }
+
   await page.getByRole('link', { name: /Enter Glyph/ }).click()
   await expect(page).toHaveURL('/login')
   await expect(page.getByText(/local demo identity/)).toBeVisible()

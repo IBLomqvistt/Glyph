@@ -1,5 +1,8 @@
 import { defineConfig, devices } from '@playwright/test'
 
+const testPort = process.env.GLYPH_TEST_PORT ?? '3000'
+const baseURL = `http://127.0.0.1:${testPort}`
+
 export default defineConfig({
   testDir: './apps/web/e2e',
   fullyParallel: true,
@@ -7,7 +10,7 @@ export default defineConfig({
   retries: 1,
   reporter: [['list'], ['html', { open: 'never' }]],
   use: {
-    baseURL: 'http://127.0.0.1:3000',
+    baseURL,
     trace: 'retain-on-failure',
   },
   projects: [
@@ -28,8 +31,8 @@ export default defineConfig({
     },
   ],
   webServer: {
-    command: 'pnpm --filter @glyph/web start',
-    url: 'http://127.0.0.1:3000',
+    command: `pnpm --filter @glyph/web exec next start -p ${testPort}`,
+    url: baseURL,
     reuseExistingServer: !process.env.CI,
     timeout: 120_000,
   },
