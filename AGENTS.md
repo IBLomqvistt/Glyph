@@ -15,6 +15,21 @@ These instructions apply to the whole repository until a more specific nested
 - Keep durable rules here. Put feature requirements in the PRD, technical
   decisions in architecture records, and one-off constraints in the task.
 
+## Canonical product workspace
+
+- This repository root, `/Users/eceozdag/Documents/Glyph`, is the canonical
+  shared Glyph workspace for every project agent. Treat external clones,
+  worktrees, screenshots, and conversation artifacts as references only until
+  their accepted changes have been reconciled into this tree.
+- The current accepted product experience is the investor landing page at `/`,
+  the Kimi K3 evidence reader at `/reader/kimi-k3`, the full report at
+  `/reports/kimi-k3`, and the Models category at `/layers/models`.
+- Start and verify the shared product from this repository root with `pnpm dev`;
+  the default local URL is `http://127.0.0.1:3000/`.
+- Before handing work to another agent, leave the implementation and its tests
+  in this repository. Do not make an external checkout the only location of an
+  accepted product change.
+
 ## Working policy
 
 - Inspect relevant files and existing patterns before editing.
