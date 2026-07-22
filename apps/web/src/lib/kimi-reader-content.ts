@@ -1,5 +1,7 @@
 import type { VisualSpec } from '@glyph/domain'
 
+export const kimiPaperVersionId = 'kimi-k3-tech-blog-2026-07-21'
+
 export const kimiDigestCards = [
   {
     id: 'source-claim',

@@ -2936,6 +2936,145 @@ code {
   display: none !important;
   margin-top: 1rem;
 }
+.kimi-question-panel {
+  max-width: 58rem;
+  margin-top: 1.25rem;
+  padding: 1rem 1.1rem;
+  border-color: color-mix(in oklch, var(--primary) 24%, var(--border));
+  background:
+    radial-gradient(circle at 0 0, var(--primary-soft), transparent 17rem),
+    color-mix(in oklch, var(--surface) 96%, var(--primary-soft));
+  box-shadow: 0 12px 36px color-mix(in oklch, var(--primary) 7%, transparent);
+}
+.kimi-question-heading {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+.kimi-question-mark {
+  width: 2.35rem;
+  height: 2.35rem;
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  border: 1px solid color-mix(in oklch, var(--primary) 28%, var(--border));
+  border-radius: 0.7rem;
+  color: var(--primary-strong);
+  background: var(--surface);
+}
+.kimi-question-heading h2 {
+  margin: 0;
+  font: 760 0.9rem var(--font-sans);
+}
+.kimi-question-heading p {
+  margin: 0.14rem 0 0;
+  color: var(--muted);
+  font-size: 0.7rem;
+}
+.kimi-question-form {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: stretch;
+  gap: 0.65rem;
+  margin-top: 0.85rem;
+}
+.kimi-question-form textarea {
+  width: 100%;
+  min-height: 3.2rem;
+  resize: vertical;
+  padding: 0.72rem 0.85rem;
+  border: 1px solid var(--border);
+  border-radius: 0.68rem;
+  outline: none;
+  color: var(--ink);
+  background: color-mix(in oklch, var(--surface) 96%, transparent);
+  font: 500 0.78rem/1.4 var(--font-sans);
+}
+.kimi-question-form textarea:focus-visible {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px color-mix(in oklch, var(--primary) 15%, transparent);
+}
+.kimi-question-form .button {
+  min-width: 7.7rem;
+  align-self: stretch;
+}
+.kimi-question-spinner {
+  animation: spin 0.8s linear infinite;
+}
+.kimi-question-live:empty {
+  display: none;
+}
+.kimi-question-status,
+.kimi-question-error {
+  margin: 0.75rem 0 0;
+  color: var(--muted);
+  font-size: 0.72rem;
+}
+.kimi-question-error {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: oklch(0.47 0.17 28);
+}
+.kimi-question-answer {
+  margin-top: 0.8rem;
+  padding: 0.85rem 0.95rem;
+  border: 1px solid color-mix(in oklch, var(--primary) 26%, var(--border));
+  border-radius: 0.68rem;
+  background: var(--surface);
+}
+.kimi-question-answer.is-insufficient {
+  border-color: color-mix(in oklch, oklch(0.65 0.14 75) 38%, var(--border));
+  background: color-mix(in oklch, var(--surface) 94%, oklch(0.94 0.06 85));
+}
+.kimi-question-answer > strong {
+  font-size: 0.76rem;
+}
+.kimi-question-answer > p {
+  margin: 0.35rem 0 0;
+  color: color-mix(in oklch, var(--ink) 86%, var(--muted));
+  font-size: 0.76rem;
+  line-height: 1.55;
+}
+.kimi-question-answer > small {
+  display: block;
+  margin-top: 0.65rem;
+  color: var(--muted);
+  font-size: 0.62rem;
+}
+.kimi-question-citations {
+  display: flex;
+  align-items: center;
+  gap: 0.42rem;
+  margin-top: 0.7rem;
+  color: var(--muted);
+  font-size: 0.64rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.kimi-question-citations button {
+  width: 1.55rem;
+  height: 1.55rem;
+  display: grid;
+  place-items: center;
+  border: 1px solid color-mix(in oklch, var(--primary) 42%, var(--border));
+  border-radius: 50%;
+  color: var(--primary-strong);
+  background: var(--surface);
+  cursor: pointer;
+  font-size: 0.68rem;
+  font-weight: 800;
+}
+.kimi-question-citations button:hover,
+.kimi-question-citations button.is-active,
+.kimi-question-citations button:focus-visible {
+  border-color: var(--primary);
+  outline: none;
+  color: white;
+  background: var(--primary);
+  box-shadow: 0 0 0 3px color-mix(in oklch, var(--primary) 14%, transparent);
+}
 .kimi-depth-tabs > .tabs-list {
   top: calc(-1.6rem + 1px);
   margin: 1.6rem 0 1.75rem;
@@ -3133,6 +3272,15 @@ code {
   }
   .mobile-source-trigger {
     display: inline-flex !important;
+  }
+  .kimi-question-panel {
+    padding: 0.9rem;
+  }
+  .kimi-question-form {
+    grid-template-columns: 1fr;
+  }
+  .kimi-question-form .button {
+    min-height: 2.65rem;
   }
   .kimi-depth-tabs > .tabs-list {
     top: 3.65rem;

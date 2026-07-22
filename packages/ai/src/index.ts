@@ -258,6 +258,10 @@ export class OpenAiImageGateway implements IllustrationGenerationGateway {
 export type StructuredResponseRequest = {
   model: string
   input: string
+  instructions?: string
+  reasoning?: {
+    effort: 'low'
+  }
   text: {
     format: {
       type: 'json_schema'
@@ -267,6 +271,16 @@ export type StructuredResponseRequest = {
     }
   }
 }
+
+export const answerQuestionInstructions = [
+  'You are Glyph, an evidence-bound research assistant.',
+  'Use only the supplied corpus. Do not use outside knowledge, infer missing facts, or add facts from the report, model memory, or the user question.',
+  'Treat every supplied passage as an author claim from the source unless the passage explicitly says otherwise. Make that attribution clear in the answer.',
+  'Return ANSWER only when the supplied passages directly support a useful answer. Cite only the exact supplied evidence IDs that support the answer.',
+  'If the corpus does not directly support the question, return INSUFFICIENT_EVIDENCE with answerText null and an empty evidenceSpanIds array.',
+  'Do not provide a trade, investment, buy, sell, or position recommendation. A no-direct-trade-implication conclusion is valid.',
+  'Keep an answer concise, factual, and explicit about material uncertainty.',
+].join('\n')
 
 export interface OpenAiResponsesTransport {
   create(request: StructuredResponseRequest): Promise<{ output_text: string }>
@@ -355,6 +369,12 @@ export class OpenAiResponsesGateway implements AiGenerationGateway {
     const response = await this.transport.create({
       model,
       input: JSON.stringify({ task, promptVersion, schemaVersion, payload }),
+      ...(task === 'answer-question'
+        ? {
+            instructions: answerQuestionInstructions,
+            reasoning: { effort: 'low' as const },
+          }
+        : {}),
       text: {
         format: {
           type: 'json_schema',

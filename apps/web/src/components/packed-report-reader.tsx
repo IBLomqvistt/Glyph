@@ -38,6 +38,7 @@ import {
   kimiKeyFinding,
 } from '@/lib/kimi-reader-content'
 import { Diagram } from './diagram'
+import { KimiQuestionPanel } from './kimi-question-panel'
 import { PdfPage } from './pdf-page'
 import { ReaderPaperSearch } from './reader-paper-search'
 
@@ -280,6 +281,18 @@ export function PackedReportReader({
         >
           <FileText aria-hidden="true" size={16} /> Open source PDF
         </Button>
+
+        <KimiQuestionPanel
+          slug={slug}
+          activeEvidenceId={
+            selectedEvidenceBlockId.startsWith('glyph-answer-')
+              ? selectedEvidenceId
+              : null
+          }
+          onSelectEvidence={(evidenceId) =>
+            selectEvidence(evidenceId, `glyph-answer-${evidenceId}`)
+          }
+        />
 
         <TabsRoot defaultValue="summary" className="depth-tabs kimi-depth-tabs">
           <TabsList className="tabs-list" aria-label="Kimi K3 digest sections">

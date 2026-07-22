@@ -4,10 +4,12 @@ import {
   ExternalAiDisabledError,
   OpenAiImageGateway,
   OpenAiResponsesGateway,
+  answerQuestionInstructions,
   buildQuoteMatchingAgentPrompt,
   buildReportAgentPrompt,
   getOpenAiClient,
   reportAgentSections,
+  type StructuredResponseRequest,
 } from './index'
 
 describe('AI safety boundary', () => {
@@ -109,6 +111,57 @@ describe('AI safety boundary', () => {
         evidenceSpans: [],
       }),
     ).rejects.toThrow('outside the supplied corpus')
+    delete process.env.OPENAI_MODEL
+  })
+
+  it('grounds cited answers with explicit low reasoning and fail-closed instructions', async () => {
+    process.env.OPENAI_MODEL = 'test-model'
+    let capturedRequest: StructuredResponseRequest | null = null
+    const gateway = new OpenAiResponsesGateway({
+      create: (request) => {
+        capturedRequest = request
+        return Promise.resolve({
+          output_text: JSON.stringify({
+            schemaVersion: 1,
+            result: {
+              outcome: 'ANSWER',
+              answerText: 'The source author claims a bounded result.',
+              evidenceSpanIds: ['evidence-1'],
+            },
+          }),
+        })
+      },
+    })
+
+    await expect(
+      gateway.answerQuestion({
+        reportId: 'report-demo',
+        question: 'What does the source claim?',
+        evidenceSpans: [
+          {
+            schemaVersion: 1,
+            id: 'evidence-1',
+            paperVersionId: 'version-demo',
+            pageNumber: 1,
+            section: 'Launch post',
+            exactText: 'The author claims a bounded result.',
+            boxes: [{ x: 0.1, y: 0.1, width: 0.2, height: 0.05 }],
+          },
+        ],
+      }),
+    ).resolves.toMatchObject({
+      result: {
+        outcome: 'ANSWER',
+        evidenceSpanIds: ['evidence-1'],
+      },
+    })
+    expect(capturedRequest).toMatchObject({
+      reasoning: { effort: 'low' },
+      instructions: answerQuestionInstructions,
+    })
+    expect(answerQuestionInstructions).toContain('Use only the supplied corpus')
+    expect(answerQuestionInstructions).toContain('INSUFFICIENT_EVIDENCE')
+    expect(answerQuestionInstructions).toContain('Do not provide a trade')
     delete process.env.OPENAI_MODEL
   })
 

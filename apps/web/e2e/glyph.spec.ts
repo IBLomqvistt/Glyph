@@ -142,6 +142,60 @@ test('the real Kimi K3 pack uses the native reference-style reader', async ({
   }
 })
 
+test('Glyph it returns a mapped answer and opens its exact citation', async ({
+  page,
+  isMobile,
+}) => {
+  await page.route('**/api/reports/kimi-k3/questions', async (route) => {
+    const request = route.request()
+    expect(request.method()).toBe('POST')
+    expect(request.postDataJSON()).toEqual({
+      question: 'What does the source claim about expert routing?',
+    })
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      headers: { 'Cache-Control': 'no-store' },
+      body: JSON.stringify({
+        outcome: 'ANSWER',
+        answerText:
+          'Moonshot claims K3 activates 16 of 896 experts and reports an approximate 2.5× scaling-efficiency improvement versus K2.',
+        evidenceIds: ['evidence-routing'],
+        model: 'gpt-5.6-sol',
+        timestamp: '2026-07-22T00:00:00.000Z',
+      }),
+    })
+  })
+
+  await page.goto('/reader/kimi-k3')
+  await page
+    .getByLabel('Ask a question about the Kimi K3 source')
+    .fill('What does the source claim about expert routing?')
+  await page.getByRole('button', { name: 'Glyph it', exact: true }).click()
+  await expect(page.getByText('Evidence-bound answer')).toBeVisible()
+  await expect(
+    page.getByText(/Moonshot claims K3 activates 16 of 896/),
+  ).toBeVisible()
+  await page
+    .getByRole('button', { name: 'Open cited source passage 2' })
+    .click()
+
+  if (isMobile) {
+    await expect(page.getByRole('dialog')).toBeVisible()
+    await expect(
+      page.getByRole('dialog').getByTestId('pdf-page'),
+    ).toHaveAttribute('data-page', '4')
+    await expect(
+      page.getByRole('dialog').locator('.evidence-badge'),
+    ).toHaveText('2')
+  } else {
+    await expect(page.getByTestId('pdf-page')).toHaveAttribute('data-page', '4')
+    await expect(
+      page.getByTestId('pdf-page').locator('.evidence-badge'),
+    ).toHaveText('2')
+  }
+})
+
 test('public landing leads through explicit demo access to the product', async ({
   page,
 }) => {
