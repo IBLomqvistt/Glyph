@@ -81,7 +81,7 @@ export const layerCategoryContent: Record<LayerSlug, LayerCategoryContent> = {
         concepts: featuredReport.topicLabels,
         relevance:
           'Connects Kimi K3 architecture claims to model-serving economics while keeping unresolved launch claims explicit.',
-        readerHref: `/reader/${featuredReport.slug}`,
+        readerHref: featuredReport.reportPath,
       },
     ],
   },

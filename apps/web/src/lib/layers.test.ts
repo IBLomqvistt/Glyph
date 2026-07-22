@@ -34,7 +34,7 @@ describe('AI architecture layers', () => {
     )
 
     expect(linkedRecords).toHaveLength(1)
-    expect(linkedRecords[0]?.readerHref).toBe('/reader/kimi-k3')
+    expect(linkedRecords[0]?.readerHref).toBe('/reports/kimi-k3/report.html')
     expect(linkedRecords[0]?.sourceLogo).toBe('/assets/logos/kimi.png')
   })
 })

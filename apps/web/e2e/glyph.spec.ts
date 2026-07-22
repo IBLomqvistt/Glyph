@@ -5,7 +5,7 @@ const screenshotDirectory = 'work/overnight/screenshots'
 
 const dailyPaper = {
   title: 'Kimi K3: an enormous open model, engineered to be affordable to run',
-  readerHref: '/reader/kimi-k3',
+  reportHref: '/reports/kimi-k3/report.html',
   categoryHref: '/layers/models',
 } as const
 
@@ -72,6 +72,38 @@ test('home previews today’s paper before opening its category', async ({
   await expect(
     page.getByRole('heading', { name: 'Layer 4: Models', level: 1 }),
   ).toBeVisible()
+})
+
+test('both product brands open the landing page and its platform entrance', async ({
+  page,
+  isMobile,
+}) => {
+  test.skip(isMobile, 'The desktop shell exposes both brand controls.')
+
+  const toolbarBrand = page.locator('.toolbar-brand')
+  const sidebarBrand = page.locator('.desktop-sidebar .brand')
+  await expect(toolbarBrand).toHaveAttribute('href', '/')
+  await expect(sidebarBrand).toHaveAttribute('href', '/')
+  await expect(toolbarBrand.locator('img')).toHaveAttribute(
+    'src',
+    /glyph-mascot-v2/,
+  )
+  await expect(sidebarBrand.locator('img')).toHaveAttribute(
+    'src',
+    /glyph-mascot-v2/,
+  )
+
+  await toolbarBrand.click()
+  await expect(page).toHaveURL('/')
+  await expect(
+    page
+      .getByRole('navigation', { name: 'Landing navigation' })
+      .getByRole('link', { name: 'Enter Glyph' }),
+  ).toHaveAttribute('href', '/login')
+
+  await page.goto('/home')
+  await sidebarBrand.click()
+  await expect(page).toHaveURL('/')
 })
 
 test('the real Kimi K3 pack uses the native reference-style reader', async ({
@@ -196,60 +228,138 @@ test('Glyph it returns a mapped answer and opens its exact citation', async ({
   }
 })
 
-test('public landing leads through explicit demo access to the product', async ({
+test('public landing scrolls from its thesis through real product proof', async ({
   page,
 }) => {
   await page.goto('/')
+
+  const navigation = page.getByRole('navigation', {
+    name: 'Landing navigation',
+  })
+  await expect(
+    navigation.getByRole('link', { name: 'Sample report' }),
+  ).toHaveAttribute('href', '#sample-report')
+  await expect(
+    navigation.getByRole('link', { name: 'How it works' }),
+  ).toHaveAttribute('href', '#how-it-works')
+  await expect(
+    navigation.getByRole('link', { name: 'Enter Glyph' }),
+  ).toHaveAttribute('href', '/login')
+
+  await expect(
+    page.getByText('Frontier AI research for investors', { exact: true }),
+  ).toBeVisible()
   await expect(
     page.getByRole('heading', {
-      name: /Those who understand frontier AI rarely trade it/,
+      name: 'Those who understand frontier AI rarely trade it. Those who trade it rarely understand it.',
+      level: 1,
     }),
   ).toBeVisible()
   await expect(page.getByText('Glyph closes the gap.')).toBeVisible()
-  await expect(
-    page.getByRole('link', { name: 'Create demo account' }),
-  ).toHaveCount(0)
+  const hero = page.locator('section[aria-labelledby="landing-title"]')
+  await expect(hero.getByRole('link', { name: 'Enter Glyph' })).toHaveAttribute(
+    'href',
+    '/login',
+  )
 
-  const landingCopy = page.locator('.public-landing-copy')
-  const digestPreview = page.getByRole('article', {
-    name: 'Glyph Kimi K3 digest preview',
+  const productLink = page.getByRole('link', { name: /Kimi K3 report/ }).first()
+  const productImage = productLink.getByRole('img', {
+    name: /Kimi K3 report/,
   })
+  await expect(productLink).toHaveAttribute('href', dailyPaper.reportHref)
+  await expect(productImage).toBeVisible()
+  await expect
+    .poll(() =>
+      productImage.evaluate((image) =>
+        image instanceof HTMLImageElement ? image.naturalWidth : 0,
+      ),
+    )
+    .toBeGreaterThan(0)
+
+  const heroCta = page.getByRole('link', { name: 'See the product' })
+  await expect(heroCta).toHaveAttribute('href', '#sample-report')
+  const heroBox = await hero.boundingBox()
+  const productBox = await productImage.boundingBox()
+  expect(heroBox).not.toBeNull()
+  expect(productBox).not.toBeNull()
+  expect(productBox!.y).toBeGreaterThan(heroBox!.y + heroBox!.height)
+
+  const documentLayout = await page.evaluate(() => ({
+    scrollsVertically:
+      document.documentElement.scrollHeight > window.innerHeight,
+    overflowsHorizontally:
+      document.documentElement.scrollWidth >
+      document.documentElement.clientWidth,
+  }))
+  expect(documentLayout).toEqual({
+    scrollsVertically: true,
+    overflowsHorizontally: false,
+  })
+  await page.evaluate(() =>
+    window.scrollTo(0, document.documentElement.scrollHeight),
+  )
+  await expect
+    .poll(() => page.evaluate(() => window.scrollY))
+    .toBeGreaterThan(0)
+
+  await navigation.getByRole('link', { name: 'Sample report' }).click()
+  await expect(page).toHaveURL(/\/#sample-report$/)
+  await expect(page.locator('#sample-report')).toBeInViewport()
+
+  await navigation.getByRole('link', { name: 'How it works' }).click()
+  await expect(page).toHaveURL(/\/#how-it-works$/)
+  await expect(page.locator('#how-it-works')).toBeInViewport()
   await expect(
-    digestPreview.getByRole('heading', {
-      name: '16 of 896: Sparse compute, industrial coordination',
-    }),
+    page.getByRole('heading', { name: 'Understand the mechanism' }),
   ).toBeVisible()
   await expect(
-    digestPreview.locator('.public-expert-grid .is-selected'),
-  ).toHaveCount(16)
+    page.getByRole('heading', { name: 'Test the evidence' }),
+  ).toBeVisible()
+  await expect(
+    page.getByRole('heading', { name: 'Map the economic relevance' }),
+  ).toBeVisible()
+  await expect(
+    page.getByRole('heading', { name: 'No forced trade.' }),
+  ).toBeVisible()
+  await expect(page.getByText(/no direct trade implication/i)).toBeVisible()
+  await expect(
+    page.getByRole('link', { name: 'Read the Kimi K3 report' }),
+  ).toHaveAttribute('href', dailyPaper.reportHref)
 
-  const copyBox = await landingCopy.boundingBox()
-  const digestBox = await digestPreview.boundingBox()
-  expect(copyBox).not.toBeNull()
-  expect(digestBox).not.toBeNull()
-  if ((page.viewportSize()?.width ?? 0) > 820) {
-    expect(digestBox?.x).toBeGreaterThan(
-      (copyBox?.x ?? 0) + (copyBox?.width ?? 0),
-    )
-  } else {
-    expect(digestBox?.y).toBeGreaterThan(
-      (copyBox?.y ?? 0) + (copyBox?.height ?? 0),
-    )
-  }
-
-  await page.getByRole('link', { name: /Enter Glyph/ }).click()
+  await navigation.getByRole('link', { name: 'Enter Glyph' }).click()
   await expect(page).toHaveURL('/login')
-  await expect(page.getByText(/local demo identity/)).toBeVisible()
-  await page.getByRole('tab', { name: 'Sign up' }).click()
+  await page.goto('/')
+  await page
+    .getByRole('link', { name: /Kimi K3 report/ })
+    .first()
+    .click()
+  await expect(page).toHaveURL(/\/reports\/kimi-k3\/report\.html(?:#summary)?$/)
   await expect(
-    page.getByRole('heading', { name: 'Create your demo access.' }),
+    page.getByRole('heading', { name: dailyPaper.title, level: 1 }),
   ).toBeVisible()
-  await page.getByLabel('Work email').fill('demo@example.com')
-  await page.getByRole('button', { name: /Create demo access/ }).click()
+
+  await page.goto('/home')
+  await expect(page.getByTestId('today-paper')).toHaveCount(1)
+  await expect(page.getByTestId('today-paper-title')).toHaveAttribute(
+    'href',
+    dailyPaper.reportHref,
+  )
+  await expect(
+    page
+      .getByRole('navigation', { name: 'Research categories' })
+      .getByRole('link'),
+  ).toHaveCount(5)
+})
+
+test('demo access continues without an email address', async ({ page }) => {
+  await page.goto('/login')
+  await expect(page.getByRole('textbox')).toHaveCount(0)
+  await expect(
+    page.getByText(/No account or email address is required/),
+  ).toBeVisible()
+  await page.getByRole('link', { name: 'Continue to demo' }).click()
   await expect(page).toHaveURL('/home?demo=1')
-  await expect(
-    page.getByRole('heading', { name: 'What’s new today' }),
-  ).toBeVisible()
+  await expect(page.getByTestId('today-paper')).toHaveCount(1)
 })
 
 test('home category navigation precedes the latest analysis', async ({
@@ -319,15 +429,97 @@ test('all category screens render their hero, active route, and previews', async
 })
 
 test.describe('daily research home', () => {
-  test('the paper title opens the evidence reader', async ({ page }) => {
+  test('the paper title opens the full report directly', async ({ page }) => {
     const title = page.getByTestId('today-paper-title')
 
-    await expect(title).toHaveAttribute('href', dailyPaper.readerHref)
+    await expect(title).toHaveAttribute('href', dailyPaper.reportHref)
     await title.click()
-    await expect(page).toHaveURL(dailyPaper.readerHref)
+    await expect(page).toHaveURL(dailyPaper.reportHref)
     await expect(
       page.getByRole('heading', { name: dailyPaper.title, level: 1 }),
     ).toBeVisible()
+  })
+
+  test('full report scrolls through the source and answers through Glyph', async ({
+    page,
+    isMobile,
+  }) => {
+    test.skip(isMobile, 'The investor report is desktop-first.')
+    await page.route('**/api/reports/kimi-k3/questions', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          outcome: 'ANSWER',
+          answerText:
+            'Moonshot says K3 activates 16 of 896 experts and claims a 2.5x scaling-efficiency gain.',
+          evidenceIds: ['evidence-routing'],
+          model: 'test-model',
+          timestamp: '2026-07-22T12:00:00.000Z',
+        }),
+      })
+    })
+
+    await page.setViewportSize({ width: 960, height: 900 })
+    await page.goto(dailyPaper.reportHref)
+
+    await expect(page.locator('.gr-rail-logo a')).toHaveAttribute('href', '/')
+    await expect(page.locator('.gr-brand')).toHaveAttribute('href', '/')
+    await expect(page.locator('.gr-rail-logo img')).toHaveAttribute(
+      'src',
+      /glyph-mascot-v2/,
+    )
+    await expect(page.locator('.gr-page-frame')).toHaveCount(21)
+    await expect(
+      page.getByRole('button', { name: 'Previous source page' }),
+    ).toHaveCount(0)
+    await expect(
+      page.locator('.gr-page-frame[data-page="1"] .gr-evidence-highlight'),
+    ).toHaveCount(4)
+    await expect(
+      page.locator('.gr-page-frame[data-page="4"] .gr-glyph-note'),
+    ).toContainText('Sparse routing cuts arithmetic')
+
+    const pageField = page.getByLabel('Source page number')
+    await pageField.fill('4')
+    await pageField.press('Tab')
+    await expect(page.locator('.gr-page-frame[data-page="4"]')).toHaveClass(
+      /is-current/,
+    )
+    expect(
+      await page
+        .locator('.gr-source-viewport')
+        .evaluate((element) =>
+          element instanceof HTMLElement ? element.scrollTop : 0,
+        ),
+    ).toBeGreaterThan(0)
+
+    await page.getByRole('button', { name: /Glyph it/ }).click()
+    await expect(
+      page.getByRole('dialog', { name: 'Ask Glyph about the Kimi K3 paper' }),
+    ).toBeVisible()
+    await page.getByRole('button', { name: 'Expert routing' }).click()
+    await page.getByRole('button', { name: 'Ask Glyph' }).click()
+    await expect(page.getByText('Evidence-bound answer')).toBeVisible()
+    await expect(page.getByText('Source page 4 · test-model')).toBeVisible()
+
+    await page.getByRole('tab', { name: /Economics/ }).click()
+    const visualQc = await page.evaluate(() => {
+      const panel = document.querySelector('#pane-economics .panel')
+      const table = document.querySelector('#pane-economics .tablewrap')
+      return {
+        pageOverflow: document.documentElement.scrollWidth > window.innerWidth,
+        panelScrolls:
+          panel instanceof HTMLElement && panel.scrollWidth > panel.clientWidth,
+        tableScrolls:
+          table instanceof HTMLElement && table.scrollWidth > table.clientWidth,
+      }
+    })
+    expect(visualQc).toEqual({
+      pageOverflow: false,
+      panelScrolls: true,
+      tableScrolls: true,
+    })
   })
 
   test('every content tag opens the matching category', async ({ page }) => {
@@ -360,7 +552,7 @@ test.describe('daily research home', () => {
     await expect(page.getByTestId('today-paper-title')).toBeVisible()
     await expect(page.getByTestId('today-paper-title')).toHaveAttribute(
       'href',
-      dailyPaper.readerHref,
+      dailyPaper.reportHref,
     )
     await expect(page.getByTestId('today-tag-models')).toBeVisible()
     await expect(page.getByTestId('today-tag-models')).toHaveAttribute(

@@ -20,8 +20,8 @@ export default function ProductHomePage(): React.JSX.Element {
           <span className="eyebrow">Daily research brief</span>
           <h1>What’s new today</h1>
           <p>
-            Open a paper title in the reader, or choose a content tag to browse
-            its category.
+            Open a paper title in the full report, or choose a content tag to
+            browse its category.
           </p>
         </div>
         <time className="today-date" dateTime={featuredReport.publicationDate}>
@@ -61,7 +61,7 @@ export default function ProductHomePage(): React.JSX.Element {
             </div>
             <Link
               className="today-paper-title"
-              href={`/reader/${featuredReport.slug}`}
+              href={featuredReport.reportPath}
               data-testid="today-paper-title"
             >
               <h2>{featuredReport.title}</h2>

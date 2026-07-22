@@ -1,18 +1,8 @@
-'use client'
-
+import Image from 'next/image'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
-import { useState } from 'react'
 import { ArrowLeft, ArrowRight } from 'lucide-react'
 
-export function DemoAuthForm({
-  initialMode,
-}: {
-  initialMode: 'login' | 'signup'
-}): React.JSX.Element {
-  const router = useRouter()
-  const [mode, setMode] = useState(initialMode)
-
+export function DemoAuthForm(): React.JSX.Element {
   return (
     <div className="demo-auth-page">
       <Link href="/" className="demo-auth-back">
@@ -21,55 +11,25 @@ export function DemoAuthForm({
       <section className="demo-auth-card" aria-labelledby="auth-title">
         <Link href="/" className="public-brand" aria-label="Glyph home">
           <span>Glyph</span>
-          <i aria-hidden="true">G</i>
+          <Image
+            className="demo-auth-mascot"
+            src="/assets/glyph/glyph-mascot-v2.png"
+            alt=""
+            width={44}
+            height={44}
+            priority
+          />
         </Link>
         <p className="public-eyebrow">Your research desk awaits</p>
-        <h1 id="auth-title">
-          {mode === 'login' ? 'Enter Glyph.' : 'Create your demo access.'}
-        </h1>
+        <h1 id="auth-title">Enter Glyph.</h1>
         <p>
-          This V1 uses a local demo identity. No production account is created
-          and no credentials are sent to an identity provider.
+          This V1 opens directly into a local demo. No account or email address
+          is required.
         </p>
-        <div className="demo-auth-tabs" role="tablist" aria-label="Access mode">
-          <button
-            type="button"
-            role="tab"
-            aria-selected={mode === 'login'}
-            onClick={() => setMode('login')}
-          >
-            Log in
-          </button>
-          <button
-            type="button"
-            role="tab"
-            aria-selected={mode === 'signup'}
-            onClick={() => setMode('signup')}
-          >
-            Sign up
-          </button>
-        </div>
-        <form
-          className="demo-auth-form"
-          onSubmit={(event) => {
-            event.preventDefault()
-            router.push('/home?demo=1')
-          }}
-        >
-          <label htmlFor="demo-email">Work email</label>
-          <input
-            id="demo-email"
-            name="email"
-            type="email"
-            autoComplete="email"
-            placeholder="you@company.com"
-            required
-          />
-          <button type="submit">
-            {mode === 'login' ? 'Continue to demo' : 'Create demo access'}
-            <ArrowRight aria-hidden="true" size={18} />
-          </button>
-        </form>
+        <Link className="demo-auth-continue" href="/home?demo=1">
+          Continue to demo
+          <ArrowRight aria-hidden="true" size={18} />
+        </Link>
         <p className="demo-auth-note">
           Glyph provides source-linked research, not investment advice.
         </p>

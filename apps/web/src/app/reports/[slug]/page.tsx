@@ -94,7 +94,7 @@ export default async function ReportLanding({
       </div>
 
       <nav className="report-entry-grid" aria-label="Report destinations">
-        <Link href={`/reader/${featuredReport.slug}`}>
+        <Link href={featuredReport.reportPath}>
           <BookOpen aria-hidden="true" /> <span>Read report</span>
           <ArrowRight aria-hidden="true" />
         </Link>
@@ -142,7 +142,7 @@ async function ArchivePreview(): Promise<React.JSX.Element> {
               : 'This archive preview is unavailable to the visitor role. Choose the visibly marked subscriber demo role to inspect the allowed state.'}
           </p>
           {canViewArchive ? (
-            <Link href={`/reader/${featuredReport.slug}`}>
+            <Link href={featuredReport.reportPath}>
               Open Kimi K3 report <ArrowRight aria-hidden="true" />
             </Link>
           ) : null}

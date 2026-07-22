@@ -113,20 +113,31 @@ details.gcard{padding:0;border-left:3px solid var(--teal);}
 .glyphpop button:focus-visible, .askbox button:focus-visible{outline:2px solid var(--purple);outline-offset:2px;}
 .askbox textarea{width:100%;box-sizing:border-box;min-height:96px;background:var(--card);border:1px solid var(--card-line);border-radius:8px;padding:10px;color:var(--ink);font-family:var(--body);font-size:14px;}
 .askbox .gp-btns{display:flex;gap:8px;margin-top:8px;}
-.toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:var(--ink);color:var(--paper);padding:9px 16px;border-radius:8px;font-size:13px;z-index:60;}
 .glyphdock{max-width:760px;margin:14px auto -2px;padding:0 20px;box-sizing:border-box;display:flex;justify-content:space-between;align-items:flex-end;gap:8px;position:relative;z-index:6;}
 .glyphpill{display:flex;align-items:center;gap:9px;font-family:var(--mono);font-size:13.5px;letter-spacing:.06em;padding:9px 18px 9px 10px;border:2px solid var(--purple);border-bottom:none;border-radius:14px 14px 0 0;background:var(--purple-soft);color:var(--purple);cursor:pointer;font-weight:700;box-shadow:0 -3px 14px rgba(109,92,231,.18);}
-.glyphpill svg{width:32px;height:32px;}
+.glyphpill img{width:42px;height:42px;object-fit:cover;border-radius:50%;box-shadow:0 4px 12px rgba(74,61,190,.18);}
 .glyphpill .pillhint{display:block;font-size:10px;letter-spacing:.04em;font-weight:400;color:var(--muted);text-transform:none;}
 .glyphpill[aria-pressed="true"]{background:var(--purple);color:var(--paper);}
+.glyphpill[aria-pressed="true"] .pillhint{color:rgba(255,255,255,.78);}
 .glyphpill:focus-visible{outline:2px solid var(--purple);outline-offset:2px;}
-.buddy{position:fixed;right:22px;bottom:22px;z-index:55;width:74px;cursor:pointer;filter:drop-shadow(0 6px 14px rgba(24,33,31,.25));}
-@media (prefers-reduced-motion: no-preference){.buddy{animation:bob 3.2s ease-in-out infinite;}@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}}
-.buddy-bubble{position:fixed;right:104px;bottom:44px;z-index:55;max-width:250px;background:var(--card);border:1.5px solid var(--purple);border-radius:12px 12px 2px 12px;padding:10px 13px;font-size:13px;box-shadow:0 8px 24px rgba(24,33,31,.18);}
-.askpop{position:fixed;right:22px;bottom:106px;z-index:56;width:min(340px,86vw);background:var(--card);border:1.5px solid var(--purple);border-radius:12px;padding:13px 14px;box-shadow:0 10px 30px rgba(24,33,31,.22);}
-.askpop textarea{width:100%;box-sizing:border-box;min-height:76px;background:var(--paper);border:1px solid var(--card-line);border-radius:8px;padding:9px;color:var(--ink);font-family:var(--body);font-size:13.5px;}
-.askpop .gp-btns{display:flex;gap:8px;margin-top:8px;}
-.askpop button{font-family:var(--mono);font-size:11px;padding:6px 10px;border-radius:6px;border:1px solid var(--purple);background:var(--purple-soft);color:var(--purple);cursor:pointer;}
+.askpop{position:fixed;right:22px;bottom:22px;z-index:56;width:min(390px,calc(100vw - 44px));background:var(--card);border:1px solid #c8c1ff;border-radius:18px;padding:16px;box-shadow:0 20px 55px rgba(34,31,78,.22);}
+.askpop-head{display:flex;align-items:center;gap:11px;padding-bottom:12px;border-bottom:1px solid var(--line);}
+.askpop-head img{width:54px;height:54px;object-fit:cover;border-radius:50%;box-shadow:0 5px 16px rgba(74,61,190,.16);}
+.askpop-head strong{display:block;font:700 15px var(--body);color:var(--ink);}
+.askpop-head span{display:block;margin-top:2px;font-size:12px;color:var(--muted);}
+.askpop-close{margin-left:auto!important;width:30px;height:30px;padding:0!important;border-color:var(--line)!important;background:transparent!important;color:var(--muted)!important;font-size:18px!important;}
+.askpop textarea{width:100%;box-sizing:border-box;min-height:86px;margin-top:12px;background:var(--paper);border:1px solid var(--card-line);border-radius:10px;padding:10px 11px;color:var(--ink);font-family:var(--body);font-size:13.5px;resize:vertical;}
+.askpop .gp-btns{display:flex;align-items:center;gap:8px;margin-top:9px;}
+.askpop button{font-family:var(--mono);font-size:11px;padding:8px 11px;border-radius:8px;border:1px solid var(--purple);background:var(--purple-soft);color:var(--purple);cursor:pointer;}
+.askpop button[data-act="submit"]{margin-left:auto;background:var(--purple);color:#fff;font-weight:700;}
+.askpop button:disabled{cursor:wait;opacity:.6;}
+.askpop-presets{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px;}
+.askpop-presets button{padding:6px 8px;border-color:var(--line);background:#fff;color:var(--muted);font:600 10px var(--body);}
+.askpop-answer{min-height:20px;margin-top:11px;padding-top:11px;border-top:1px solid var(--line);font-size:13px;line-height:1.5;color:var(--ink);}
+.askpop-answer:empty{display:none;}
+.askpop-answer strong{display:block;margin-bottom:4px;color:var(--purple);font-size:11px;letter-spacing:.05em;text-transform:uppercase;}
+.askpop-answer small{display:block;margin-top:7px;color:var(--muted);}
+.askpop-scope{color:var(--muted);font:600 10px var(--mono);letter-spacing:.03em;}
 .toc{background:var(--card);border:1px solid var(--card-line);border-radius:10px;padding:14px 18px 12px;margin:30px 0 6px;}
 .toc-h{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--teal);margin-bottom:8px;}
 .toc ol{list-style:none;margin:0;padding:0;}
@@ -155,18 +166,8 @@ details.gcard{padding:0;border-left:3px solid var(--teal);}
 
 <div class="glyphdock">
   <button class="glyphpill" id="glyphtoggle" aria-pressed="false" title="Summon Glyph, then highlight anything">
-    <svg viewBox="0 0 64 64" role="img" aria-label="Glyph, a small round creature">
-      <line x1="32" y1="14" x2="32" y2="7" stroke="var(--purple)" stroke-width="2"/>
-      <text x="32" y="9" text-anchor="middle" font-size="11" fill="var(--purple)" font-weight="700">✳</text>
-      <ellipse cx="32" cy="38" rx="19" ry="17" fill="var(--purple-soft)" stroke="var(--purple)" stroke-width="2"/>
-      <ellipse cx="17" cy="24" rx="5" ry="7" fill="var(--purple-soft)" stroke="var(--purple)" stroke-width="2" transform="rotate(-20 17 24)"/>
-      <ellipse cx="47" cy="24" rx="5" ry="7" fill="var(--purple-soft)" stroke="var(--purple)" stroke-width="2" transform="rotate(20 47 24)"/>
-      <ellipse cx="25" cy="36" rx="3.4" ry="4.4" fill="var(--ink)"/><circle cx="26.2" cy="34.4" r="1.2" fill="var(--paper)"/>
-      <ellipse cx="39" cy="36" rx="3.4" ry="4.4" fill="var(--ink)"/><circle cx="40.2" cy="34.4" r="1.2" fill="var(--paper)"/>
-      <circle cx="19.5" cy="43" r="2.6" fill="var(--teal-soft)"/><circle cx="44.5" cy="43" r="2.6" fill="var(--teal-soft)"/>
-      <path d="M28 46 Q32 49.5 36 46" fill="none" stroke="var(--ink)" stroke-width="1.8" stroke-linecap="round"/>
-    </svg>
-    <span>Glyph it!<span class="pillhint">summon, then highlight anything</span></span>
+    <img src="/assets/glyph/glyph-mascot-v2.png" alt="" width="42" height="42">
+    <span>Glyph it<span class="pillhint">ask the paper or highlight report text</span></span>
   </button>
 </div>
 <div class="tabbar" role="tablist">
@@ -947,22 +948,10 @@ details.gcard{padding:0;border-left:3px solid var(--teal);}
     {k:['best response','equilibrium','commitment device','prisoner','game theory','nash'], t:'Game-theory terms', d:'A best response is the move that maximizes a player’s payoff given everyone else’s rational play. An equilibrium is a set of mutually consistent best responses. A commitment device is an irreversible move that makes a promise credible: releasing weights is one.', card:-1}
   ];
 
-  var pop = null, toastEl = null;
+  var pop = null;
   function killPop(){ if (pop){ pop.remove(); pop = null; } }
-  function toast(msg){
-    if (toastEl) toastEl.remove();
-    toastEl = document.createElement('div'); toastEl.className = 'toast'; toastEl.textContent = msg;
-    document.body.appendChild(toastEl);
-    setTimeout(function(){ if (toastEl){ toastEl.remove(); toastEl = null; } }, 2600);
-  }
-  function copyText(t, msg){
-    if (navigator.clipboard && navigator.clipboard.writeText){
-      navigator.clipboard.writeText(t).then(function(){ toast(msg || 'Question copied. Paste it to Glyph.'); },
-        function(){ toast('Copy blocked by the browser. Select and copy manually.'); });
-    } else { toast('Copy unsupported here. Select and copy manually.'); }
-  }
   function composeQ(sel){
-    return 'Glyph question on the Kimi K3 launch report (Glyph No.1, 21 Jul 2026): "' + sel + '" — explain this in the report’s context, state how well-evidenced it is, and what would change the assessment.';
+    return 'Using only the mapped Kimi K3 paper evidence, explain this selected report text: "' + sel.slice(0, 400) + '"';
   }
   function findTerm(sel){
     var s = sel.toLowerCase().replace(/[^a-z0-9:\s.x-]/g, ' ').replace(/\s+/g, ' ').trim();
@@ -1018,7 +1007,6 @@ details.gcard{padding:0;border-left:3px solid var(--teal);}
   document.addEventListener('mouseup', function(e){
     if (!glyphMode) return;
     if (pop && pop.contains(e.target)) return;
-    if (buddyEl && buddyEl.contains(e.target)) return;
     if (askEl && askEl.contains(e.target)) return;
     setTimeout(function(){
       var s = window.getSelection();
@@ -1045,64 +1033,103 @@ details.gcard{padding:0;border-left:3px solid var(--teal);}
       pop.addEventListener('click', function(ev){
         var act = ev.target && ev.target.dataset ? ev.target.dataset.act : null;
         if (act === 'card' && hit){ killPop(); openCard(hit.card); }
-        else if (act === 'ask'){ copyText(composeQ(text)); killPop(); }
+        else if (act === 'ask'){ openAsk(composeQ(text)); killPop(); }
         else if (act === 'x'){ killPop(); }
       });
     }, 10);
   });
   document.addEventListener('scroll', function(){ if (pop) killPop(); }, {passive:true});
-  var glyphMode = false, buddyEl = null, bubbleEl = null, askEl = null, bubbleTimer = null;
-  var MASCOT = '<svg viewBox="0 0 64 64" role="img" aria-label="Glyph">' +
-    '<line x1="32" y1="14" x2="32" y2="7" stroke="var(--purple)" stroke-width="2"/>' +
-    '<text x="32" y="9" text-anchor="middle" font-size="11" fill="var(--purple)" font-weight="700">✳</text>' +
-    '<ellipse cx="32" cy="38" rx="19" ry="17" fill="var(--purple-soft)" stroke="var(--purple)" stroke-width="2"/>' +
-    '<ellipse cx="17" cy="24" rx="5" ry="7" fill="var(--purple-soft)" stroke="var(--purple)" stroke-width="2" transform="rotate(-20 17 24)"/>' +
-    '<ellipse cx="47" cy="24" rx="5" ry="7" fill="var(--purple-soft)" stroke="var(--purple)" stroke-width="2" transform="rotate(20 47 24)"/>' +
-    '<ellipse cx="25" cy="36" rx="3.4" ry="4.4" fill="var(--ink)"/><circle cx="26.2" cy="34.4" r="1.2" fill="var(--paper)"/>' +
-    '<ellipse cx="39" cy="36" rx="3.4" ry="4.4" fill="var(--ink)"/><circle cx="40.2" cy="34.4" r="1.2" fill="var(--paper)"/>' +
-    '<circle cx="19.5" cy="43" r="2.6" fill="var(--teal-soft)"/><circle cx="44.5" cy="43" r="2.6" fill="var(--teal-soft)"/>' +
-    '<path d="M28 46 Q32 49.5 36 46" fill="none" stroke="var(--ink)" stroke-width="1.8" stroke-linecap="round"/></svg>';
-  function speak(msg, ms){
-    if (bubbleEl){ bubbleEl.remove(); bubbleEl = null; }
-    if (bubbleTimer){ clearTimeout(bubbleTimer); }
-    bubbleEl = document.createElement('div');
-    bubbleEl.className = 'buddy-bubble';
-    bubbleEl.textContent = msg;
-    document.body.appendChild(bubbleEl);
-    bubbleTimer = setTimeout(function(){ if (bubbleEl){ bubbleEl.remove(); bubbleEl = null; } }, ms || 6000);
-  }
+  var glyphMode = false, askEl = null;
   function closeAsk(){ if (askEl){ askEl.remove(); askEl = null; } }
-  function openAsk(){
+  function setAskAnswer(answerEl, label, body, meta){
+    answerEl.textContent = '';
+    var strong = document.createElement('strong');
+    strong.textContent = label;
+    answerEl.appendChild(strong);
+    var copy = document.createElement('p');
+    copy.textContent = body;
+    answerEl.appendChild(copy);
+    if (meta){
+      var small = document.createElement('small');
+      small.textContent = meta;
+      answerEl.appendChild(small);
+    }
+  }
+  function openAsk(initialQuestion){
     closeAsk();
     askEl = document.createElement('div');
     askEl.className = 'askpop';
-    askEl.innerHTML = '<p class="gp-term" style="margin:0 0 6px;font-family:var(--mono);font-size:11px;letter-spacing:.08em;color:var(--purple);font-weight:700">ASK GLYPH</p>' +
-      '<textarea aria-label="Question for Glyph" placeholder="Ask about the mechanisms, the game, the economics, what to watch on 27 July…"></textarea>' +
-      '<div class="gp-btns"><button data-act="copy">Copy question for Glyph</button><button data-act="close" class="gp-x" style="border-color:var(--line);background:transparent;color:var(--muted)">Close</button></div>';
+    askEl.setAttribute('role', 'dialog');
+    askEl.setAttribute('aria-label', 'Ask Glyph about the Kimi K3 paper');
+    askEl.innerHTML = '<div class="askpop-head">' +
+      '<img src="/assets/glyph/glyph-mascot-v2.png" alt="" width="54" height="54">' +
+      '<div><strong>Glyph it</strong><span>Answers stay inside mapped K3 paper evidence.</span></div>' +
+      '<button type="button" class="askpop-close" data-act="close" aria-label="Close Glyph">×</button></div>' +
+      '<div class="askpop-presets">' +
+      '<button type="button" data-question="What does the paper support about K3 model scale?">Model scale</button>' +
+      '<button type="button" data-question="What does the paper support about expert routing and scaling efficiency?">Expert routing</button></div>' +
+      '<textarea aria-label="Question for Glyph" maxlength="500" placeholder="Ask what the paper supports about scale or expert routing."></textarea>' +
+      '<div class="gp-btns"><span class="askpop-scope">Paper evidence only</span><button type="button" data-act="submit">Ask Glyph</button></div>' +
+      '<div class="askpop-answer" role="status" aria-live="polite"></div>';
     document.body.appendChild(askEl);
+    var textarea = askEl.querySelector('textarea');
+    var submit = askEl.querySelector('[data-act="submit"]');
+    var answerEl = askEl.querySelector('.askpop-answer');
+    if (initialQuestion) textarea.value = initialQuestion;
+    function submitQuestion(){
+      var question = (textarea.value || '').trim();
+      if (question.length < 3 || question.length > 500){
+        setAskAnswer(answerEl, 'Check the question', 'Use between 3 and 500 characters.');
+        return;
+      }
+      submit.disabled = true;
+      submit.textContent = 'Checking...';
+      setAskAnswer(answerEl, 'Checking evidence', 'Glyph is reading the mapped source passages.');
+      fetch('/api/reports/kimi-k3/questions', {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({question:question}),
+        cache:'no-store'
+      }).then(function(response){
+        return response.json().catch(function(){ return null; }).then(function(payload){
+          if (!response.ok){
+            if (response.status === 503) throw new Error('Live Glyph analysis is not configured on this server.');
+            throw new Error('Glyph could not produce a validated answer.');
+          }
+          return payload;
+        });
+      }).then(function(payload){
+        if (!payload || (payload.outcome !== 'ANSWER' && payload.outcome !== 'INSUFFICIENT_EVIDENCE')) throw new Error('Glyph returned an invalid answer.');
+        if (payload.outcome === 'INSUFFICIENT_EVIDENCE'){
+          setAskAnswer(answerEl, 'Insufficient evidence', 'The mapped paper passages do not support an answer. Glyph will not fill the gap.');
+          return;
+        }
+        var pages = (payload.evidenceIds || []).map(function(id){ return id === 'evidence-model-scale' ? '1' : id === 'evidence-routing' ? '4' : null; }).filter(Boolean);
+        setAskAnswer(answerEl, 'Evidence-bound answer', payload.answerText, 'Source page' + (pages.length > 1 ? 's ' : ' ') + pages.join(', ') + ' · ' + payload.model);
+      }).catch(function(error){
+        setAskAnswer(answerEl, 'Glyph unavailable', error.message || 'Glyph could not reach the analysis service.');
+      }).finally(function(){
+        submit.disabled = false;
+        submit.textContent = 'Ask Glyph';
+      });
+    }
     askEl.addEventListener('click', function(ev){
       var act = ev.target && ev.target.dataset ? ev.target.dataset.act : null;
-      if (act === 'copy'){
-        var v = (askEl.querySelector('textarea').value || '').trim();
-        if (!v){ toast('Type a question first.'); return; }
-        copyText(composeQ(v));
-      } else if (act === 'close'){ closeAsk(); }
+      var preset = ev.target && ev.target.dataset ? ev.target.dataset.question : null;
+      if (preset){ textarea.value = preset; textarea.focus(); }
+      else if (act === 'submit'){ submitQuestion(); }
+      else if (act === 'close'){ dismiss(); }
     });
-    askEl.querySelector('textarea').focus();
+    textarea.addEventListener('keydown', function(event){
+      if (event.key === 'Enter' && (event.ctrlKey || event.metaKey)){ event.preventDefault(); submitQuestion(); }
+    });
+    textarea.focus();
   }
-  function summon(){
-    buddyEl = document.createElement('div');
-    buddyEl.className = 'buddy';
-    buddyEl.setAttribute('title', 'Click me to ask Glyph directly');
-    buddyEl.innerHTML = MASCOT;
-    document.body.appendChild(buddyEl);
-    buddyEl.addEventListener('click', function(){ if (askEl){ closeAsk(); } else { openAsk(); } });
-    speak('Highlight anything in the report: I explain terms and package questions. Click me to ask directly.', 7000);
-  }
+  function summon(){ openAsk(); }
   function dismiss(){
-    if (buddyEl){ buddyEl.remove(); buddyEl = null; }
-    if (bubbleEl){ bubbleEl.remove(); bubbleEl = null; }
     closeAsk(); killPop();
+    glyphMode = false;
+    if (dock) dock.setAttribute('aria-pressed', 'false');
   }
   var dock = document.getElementById('glyphtoggle');
   if (dock){ dock.addEventListener('click', function(){
@@ -1222,28 +1249,21 @@ body.gr-enhanced{
   outline-offset:2px;
 }
 .gr-brand{
-  min-height:38px;
+  width:50px;
+  height:50px;
   display:flex;
   align-items:center;
   justify-content:center;
-  gap:9px;
-  border:1px solid #e1e3f5;
-  border-radius:11px;
-  color:var(--ink);
-  background:linear-gradient(135deg,#f1f0ff,#fff);
-  box-shadow:0 7px 22px rgba(65,58,149,.06);
-  font:700 14px var(--display);
-  letter-spacing:.01em;
+  justify-self:center;
+  border-radius:50%;
+  text-decoration:none;
 }
-.gr-brand-mark{
-  width:23px;
-  height:23px;
-  display:grid;
-  place-items:center;
-  border-radius:8px;
-  color:#fff;
-  background:linear-gradient(145deg,#7868ff,#5849df);
-  font:800 13px var(--body);
+.gr-brand img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  border-radius:inherit;
+  box-shadow:0 7px 20px rgba(65,58,149,.14);
 }
 .gr-top-actions{justify-content:flex-end;}
 .gr-top-actions .gr-text-action{font-size:13px;}
@@ -1274,16 +1294,23 @@ body.gr-enhanced{
   background:rgba(253,253,255,.92);
 }
 .gr-rail-logo{
-  width:34px;
-  height:34px;
+  width:40px;
+  height:40px;
   display:grid;
   place-items:center;
   margin-bottom:8px;
-  border-radius:10px;
-  color:#fff;
-  background:linear-gradient(145deg,#7565ff,#5042db);
-  box-shadow:0 7px 16px rgba(83,67,219,.22);
-  font:800 17px var(--body);
+}
+.gr-rail-logo a{
+  width:40px;
+  height:40px;
+  border-radius:50%;
+}
+.gr-rail-logo img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  border-radius:inherit;
+  box-shadow:0 7px 16px rgba(83,67,219,.16);
 }
 .gr-rail a[aria-current="page"]{
   color:#fff;
@@ -1423,6 +1450,7 @@ body.gr-enhanced{
 .gr-source-viewport{
   min-height:0;
   overflow:auto;
+  --gr-page-zoom:100%;
   padding:20px clamp(14px,3vw,34px) 42px;
   background:
     linear-gradient(45deg,rgba(212,215,236,.18) 25%,transparent 25%) 0 0/22px 22px,
@@ -1434,19 +1462,27 @@ body.gr-enhanced{
 .gr-page-frame{
   width:var(--gr-page-zoom,100%);
   min-width:360px;
-  display:inline-block;
+  display:block;
   position:relative;
+  margin:0 auto 24px;
   border:1px solid #dfe1ee;
   background:#fff;
   box-shadow:0 16px 44px rgba(51,55,103,.16);
   text-align:left;
   transition:width .18s ease;
+  container-type:inline-size;
 }
+.gr-page-frame.is-current{outline:2px solid rgba(101,87,242,.22);outline-offset:2px;}
 .gr-page-frame img{
   width:100%;
   height:auto;
   display:block;
 }
+.gr-annotation-layer{position:absolute;inset:0;pointer-events:none;}
+.gr-evidence-highlight{position:absolute;display:block;border-radius:2px;background:rgba(255,211,79,.34);box-shadow:inset 0 -2px 0 rgba(101,87,242,.65);mix-blend-mode:multiply;}
+.gr-glyph-note{position:absolute;left:10.7%;width:78.5%;box-sizing:border-box;display:flex;align-items:center;gap:2.2cqw;padding:1.5cqw 2cqw;border:1px solid rgba(101,87,242,.35);border-left:4px solid #6557f2;border-radius:8px;background:rgba(247,246,255,.96);box-shadow:0 5px 18px rgba(44,39,112,.10);color:#242958;font:600 clamp(8px,2.15cqw,13px)/1.35 Arial,'Segoe UI',sans-serif;}
+.gr-glyph-note img{width:clamp(24px,7cqw,42px);height:clamp(24px,7cqw,42px);flex:0 0 auto;object-fit:cover;border-radius:50%;}
+.gr-glyph-note strong{display:block;margin-bottom:.35cqw;color:#6557f2;font-size:.78em;letter-spacing:.09em;text-transform:uppercase;}
 .gr-page-loading{
   position:absolute;
   top:12px;
@@ -1607,8 +1643,7 @@ body.gr-enhanced{
 .gr-digest .svg-boxcl,
 .gr-digest .svg-boxpu{filter:drop-shadow(0 5px 12px rgba(54,58,115,.045));}
 .gr-enhanced .glyphpop,
-.gr-enhanced .askpop,
-.gr-enhanced .buddy-bubble{
+.gr-enhanced .askpop{
   border-color:#bfb5ff;
   background:#fff;
   box-shadow:var(--gr-shadow);
@@ -1618,6 +1653,10 @@ body.gr-enhanced{
   .gr-workspace{grid-template-columns:54px minmax(370px,45%) minmax(390px,1fr);}
   .gr-digest h1{font-size:clamp(32px,4vw,44px);}
   .gr-topbar{grid-template-columns:1fr minmax(230px,360px) 1fr;}
+  .gr-digest .panel,
+  .gr-digest .tablewrap{overflow-x:auto;scrollbar-gutter:stable;}
+  .gr-digest .panel svg{min-width:720px;}
+  .gr-digest .tablewrap table{min-width:760px;}
 }
 @media (max-width:840px){
   body.gr-enhanced{height:100dvh;}
@@ -1656,6 +1695,7 @@ body.gr-enhanced{
   }
   .gr-rail{gap:6px;}
   .gr-rail-logo{width:30px;height:30px;font-size:15px;}
+  .gr-rail-logo a{width:30px;height:30px;}
   .gr-rail a,.gr-rail button{width:30px;height:30px;font-size:16px;}
   .gr-rail a:nth-of-type(3),
   .gr-rail a:nth-of-type(4){display:none;}
@@ -1743,9 +1783,14 @@ body.gr-enhanced{
   windowActions.appendChild(dots);
   windowActions.appendChild(historyActions);
 
-  var brand = el('div','gr-brand');
-  brand.appendChild(el('span','gr-brand-mark','G'));
-  brand.appendChild(el('span','', 'Glyph · Kimi K3'));
+  var brand = el('a','gr-brand');
+  brand.href = '/';
+  brand.setAttribute('aria-label','Open Glyph landing page');
+  var brandImage = el('img');
+  brandImage.src = '/assets/glyph/glyph-mascot-v2.png';
+  brandImage.alt = '';
+  brandImage.width = 56; brandImage.height = 56;
+  brand.appendChild(brandImage);
 
   var topActions = el('div','gr-top-actions');
   var typeButton = iconButton('Reading appearance','Aa');
@@ -1765,9 +1810,19 @@ body.gr-enhanced{
   var workspace = el('div','gr-workspace');
   var rail = el('nav','gr-rail');
   rail.setAttribute('aria-label','Glyph navigation');
-  rail.appendChild(el('div','gr-rail-logo','G'));
+  var railLogo = el('div','gr-rail-logo');
+  var railLanding = el('a');
+  railLanding.href = '/';
+  railLanding.setAttribute('aria-label','Open Glyph landing page');
+  railLanding.title = 'Open Glyph landing page';
+  var railImage = el('img');
+  railImage.src = '/assets/glyph/glyph-mascot-v2.png';
+  railImage.alt = '';
+  railImage.width = 44; railImage.height = 44;
+  railLanding.appendChild(railImage);
+  railLogo.appendChild(railLanding);
+  rail.appendChild(railLogo);
   rail.appendChild(railLink('Product home','⌂','/home',false));
-  rail.appendChild(railLink('Kimi reader','▤','/reader/kimi-k3',false));
   rail.appendChild(railLink('Current full report','◫','#summary',true));
   rail.appendChild(railLink('Library','◇','/library',false));
   rail.appendChild(el('span','gr-rail-spacer'));
@@ -1794,12 +1849,6 @@ body.gr-enhanced{
 
   var toolbar = el('div','gr-source-toolbar');
   toolbar.setAttribute('aria-label','Source document controls');
-  var previous = iconButton('Previous source page','↑');
-  previous.dataset.action = 'previous';
-  var next = iconButton('Next source page','↓');
-  next.dataset.action = 'next';
-  toolbar.appendChild(previous);
-  toolbar.appendChild(next);
   var pageField = el('label','gr-page-field');
   var pageInput = el('input');
   pageInput.type = 'number';
@@ -1821,16 +1870,7 @@ body.gr-enhanced{
 
   var viewport = el('div','gr-source-viewport');
   viewport.tabIndex = 0;
-  viewport.setAttribute('aria-label','Rendered Kimi K3 source page');
-  var frame = el('figure','gr-page-frame');
-  var loading = el('span','gr-page-loading','Loading page 1');
-  loading.setAttribute('role','status');
-  loading.setAttribute('aria-live','polite');
-  var image = el('img');
-  image.src = '/papers/kimi-k3-pages/page-01.png';
-  image.alt = 'Rendered Kimi K3 source page 1';
-  image.width = 1190; image.height = 1684; image.decoding = 'async';
-  frame.appendChild(loading); frame.appendChild(image); viewport.appendChild(frame);
+  viewport.setAttribute('aria-label','Rendered Kimi K3 source pages in continuous vertical flow');
   source.appendChild(sourceHead); source.appendChild(result); source.appendChild(toolbar); source.appendChild(viewport);
 
   var digest = el('main','gr-digest');
@@ -1846,44 +1886,105 @@ body.gr-enhanced{
   document.body.insertBefore(app,document.body.firstChild.nextSibling);
   document.body.classList.add('gr-enhanced');
 
-  var currentPage = 1, zoom = 1, pageCount = 21;
+  var currentPage = 1, zoom = 1, pageCount = 21, frames = [], scrollTick = null;
+  var annotations = {
+    1:{
+      note:'2.8T is total capacity, not per-token compute.',
+      noteTop:85.2,
+      boxes:[
+        {x:74.3874,y:61.8965,w:11.7051,h:1.1964},
+        {x:10.8114,y:64.3908,w:69.9539,h:1.5371},
+        {x:10.8822,y:66.8851,w:69.3817,h:1.5371},
+        {x:10.7257,y:69.3794,w:8.0534,h:1.1964}
+      ]
+    },
+    4:{
+      note:'Sparse routing cuts arithmetic. Serving still coordinates a 896-expert pool.',
+      noteTop:68.2,
+      boxes:[
+        {x:10.8822,y:51.2848,w:77.2916,h:1.6583},
+        {x:10.7257,y:53.8791,w:71.7905,h:1.5583},
+        {x:10.7557,y:56.3734,w:77.3966,h:1.5583},
+        {x:10.8586,y:58.8677,w:62.5092,h:1.5583}
+      ]
+    }
+  };
   function pagePath(page){ return '/papers/kimi-k3-pages/page-' + String(page).padStart(2,'0') + '.png'; }
-  function renderPage(nextPage){
+  function buildPage(page){
+    var frame = el('figure','gr-page-frame');
+    frame.dataset.page = String(page);
+    var loading = el('span','gr-page-loading','Loading page ' + page);
+    loading.setAttribute('role','status');
+    var image = el('img');
+    image.src = pagePath(page);
+    image.alt = 'Rendered Kimi K3 source page ' + page;
+    image.width = 1190; image.height = 1684; image.decoding = 'async';
+    image.loading = page === 1 ? 'eager' : 'lazy';
+    image.addEventListener('load',function(){ loading.hidden = true; });
+    image.addEventListener('error',function(){ loading.hidden = false; loading.textContent = 'Source page unavailable'; });
+    frame.appendChild(loading);
+    frame.appendChild(image);
+    if (annotations[page]){
+      var layer = el('div','gr-annotation-layer');
+      layer.setAttribute('aria-label','Glyph annotations on source page ' + page);
+      annotations[page].boxes.forEach(function(box){
+        var highlight = el('span','gr-evidence-highlight');
+        highlight.style.left = box.x + '%'; highlight.style.top = box.y + '%';
+        highlight.style.width = box.w + '%'; highlight.style.height = box.h + '%';
+        layer.appendChild(highlight);
+      });
+      var note = el('div','gr-glyph-note');
+      note.style.top = annotations[page].noteTop + '%';
+      note.innerHTML = '<img src="/assets/glyph/glyph-mascot-v2.png" alt="" width="42" height="42"><span><strong>Glyph note</strong>' + annotations[page].note + '</span>';
+      layer.appendChild(note);
+      frame.appendChild(layer);
+    }
+    viewport.appendChild(frame);
+    frames.push(frame);
+  }
+  for (var page = 1; page <= pageCount; page++) buildPage(page);
+  function setCurrentPage(nextPage){
     currentPage = Math.max(1,Math.min(pageCount,Number(nextPage) || 1));
     pageInput.value = String(currentPage);
-    previous.disabled = currentPage === 1;
-    next.disabled = currentPage === pageCount;
-    loading.hidden = false;
-    loading.textContent = 'Loading page ' + currentPage;
     resultStatus.textContent = 'Kimi K3 · page ' + currentPage + ' of ' + pageCount;
-    image.alt = 'Rendered Kimi K3 source page ' + currentPage;
-    image.src = pagePath(currentPage);
-    viewport.scrollTo({top:0,left:0,behavior:'smooth'});
+    frames.forEach(function(frame){ frame.classList.toggle('is-current', Number(frame.dataset.page) === currentPage); });
+  }
+  function scrollToPage(nextPage){
+    var page = Math.max(1,Math.min(pageCount,Number(nextPage) || 1));
+    var frame = frames[page - 1];
+    if (!frame) return;
+    setCurrentPage(page);
+    viewport.scrollTo({top:Math.max(0,frame.offsetTop - 16),left:0,behavior:'smooth'});
+  }
+  function updateCurrentPage(){
+    scrollTick = null;
+    var viewportRect = viewport.getBoundingClientRect();
+    var target = viewportRect.top + 54;
+    var bestPage = currentPage, bestDistance = Infinity;
+    frames.forEach(function(frame){
+      var rect = frame.getBoundingClientRect();
+      var distance = rect.top <= target && rect.bottom >= target ? 0 : Math.min(Math.abs(rect.top - target),Math.abs(rect.bottom - target));
+      if (distance < bestDistance){ bestDistance = distance; bestPage = Number(frame.dataset.page); }
+    });
+    if (bestPage !== currentPage) setCurrentPage(bestPage);
   }
   function renderZoom(nextZoom){
     zoom = Math.max(.7,Math.min(1.6,nextZoom));
-    frame.style.setProperty('--gr-page-zoom',Math.round(zoom * 100) + '%');
+    viewport.style.setProperty('--gr-page-zoom',Math.round(zoom * 100) + '%');
     zoomLabel.textContent = Math.round(zoom * 100) + '%';
     zoomOut.disabled = zoom <= .7;
     zoomIn.disabled = zoom >= 1.6;
   }
-  image.addEventListener('load',function(){ loading.textContent = 'Page ' + currentPage + ' ready'; setTimeout(function(){ loading.hidden = true; },700); });
-  image.addEventListener('error',function(){ loading.hidden = false; loading.textContent = 'Source page unavailable'; });
-  previous.addEventListener('click',function(){ renderPage(currentPage - 1); });
-  next.addEventListener('click',function(){ renderPage(currentPage + 1); });
-  pageInput.addEventListener('change',function(){ renderPage(pageInput.value); });
+  viewport.addEventListener('scroll',function(){ if (!scrollTick) scrollTick = requestAnimationFrame(updateCurrentPage); },{passive:true});
+  pageInput.addEventListener('change',function(){ scrollToPage(pageInput.value); });
   zoomOut.addEventListener('click',function(){ renderZoom(zoom - .15); });
   zoomIn.addEventListener('click',function(){ renderZoom(zoom + .15); });
   fullscreen.addEventListener('click',function(){ if(source.requestFullscreen) source.requestFullscreen(); });
   search.addEventListener('keydown',function(event){
     if(event.key !== 'Enter') return;
     var match = search.value.match(/^\s*(\d{1,2})\s*$/);
-    if(match){ renderPage(match[1]); search.value = ''; }
+    if(match){ scrollToPage(match[1]); search.value = ''; }
     else { resultStatus.textContent = 'Text search is available in the PDF download'; }
-  });
-  viewport.addEventListener('keydown',function(event){
-    if(event.key === 'ArrowLeft' || event.key === 'PageUp'){ event.preventDefault(); renderPage(currentPage - 1); }
-    if(event.key === 'ArrowRight' || event.key === 'PageDown'){ event.preventDefault(); renderPage(currentPage + 1); }
   });
   tabBar.addEventListener('click',function(event){
     if(event.target.closest && event.target.closest('.tabbtn')) requestAnimationFrame(function(){ digest.scrollTo({top:0,behavior:'smooth'}); });
@@ -1898,6 +1999,6 @@ body.gr-enhanced{
     if(hash === 'summary' || hash === 'mechanisms' || hash === 'economics') digest.scrollTo({top:0});
   });
   renderZoom(1);
-  renderPage(1);
+  setCurrentPage(1);
 })();
 </script>

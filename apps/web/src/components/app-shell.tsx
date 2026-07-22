@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { useState } from 'react'
@@ -17,11 +18,12 @@ import {
 } from 'lucide-react'
 import { Button, Sheet, SheetContent, SheetTrigger } from '@glyph/ui'
 import type { UserRole } from '@glyph/domain'
+import { featuredReport } from '@/lib/featured-report'
 import { RoleSwitcher } from './role-switcher'
 
 const publicNavigation = [
   { href: '/home', label: 'Home', icon: Home },
-  { href: '/reader/kimi-k3', label: 'Reader', icon: BookOpen },
+  { href: featuredReport.reportPath, label: 'Report', icon: BookOpen },
   { href: '/library', label: 'Library', icon: Boxes },
 ] as const
 
@@ -143,11 +145,17 @@ export function AppShell({
             </Button>
           ) : null}
         </div>
-        <Link href="/home" className="toolbar-brand" aria-label="Glyph home">
-          <span className="glyph-sigil" aria-hidden="true">
-            ◇
-          </span>
-          Glyph
+        <Link
+          href="/"
+          className="toolbar-brand"
+          aria-label="Open Glyph landing page"
+        >
+          <Image
+            src="/assets/glyph/glyph-mascot-v2.png"
+            alt=""
+            width={56}
+            height={56}
+          />
         </Link>
         <Sheet>
           <SheetTrigger asChild>
@@ -167,8 +175,14 @@ export function AppShell({
         </Sheet>
       </header>
       <aside className="desktop-sidebar">
-        <Link href="/home" className="brand" aria-label="Glyph home">
-          <span className="brand-mark">G</span>
+        <Link href="/" className="brand" aria-label="Open Glyph landing page">
+          <Image
+            className="brand-mascot"
+            src="/assets/glyph/glyph-mascot-v2.png"
+            alt=""
+            width={48}
+            height={48}
+          />
           <span>Glyph</span>
         </Link>
         <Navigation role={role} pathname={pathname} />
