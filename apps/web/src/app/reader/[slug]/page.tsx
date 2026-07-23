@@ -1,6 +1,5 @@
 import { notFound, redirect } from 'next/navigation'
 import { FixtureCitedQuestionService } from '@glyph/application'
-import { PackedReportReader } from '@/components/packed-report-reader'
 import { ReaderExperience } from '@/components/reader-experience'
 import { edition } from '@/lib/edition'
 import { featuredReport } from '@/lib/featured-report'
@@ -13,13 +12,8 @@ export default async function ReaderPage({
   searchParams: Promise<Record<string, string | string[] | undefined>>
 }): Promise<React.JSX.Element> {
   const [{ slug }, query] = await Promise.all([params, searchParams])
-  if (slug === edition.report.slug) redirect(`/reader/${featuredReport.slug}`)
-  if (slug === featuredReport.slug) {
-    return (
-      <div className="reader-page reader-page-kimi">
-        <PackedReportReader {...featuredReport} />
-      </div>
-    )
+  if (slug === edition.report.slug || slug === featuredReport.slug) {
+    redirect(`/reports/${featuredReport.slug}`)
   }
   if (slug !== 'synthetic-fixture') notFound()
   const initialEvidenceId =

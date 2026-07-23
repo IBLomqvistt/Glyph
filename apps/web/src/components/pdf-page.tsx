@@ -37,11 +37,17 @@ export function PdfPage({
   highlightNumber?: number
 }): React.JSX.Element {
   const canvasRef = useRef<HTMLCanvasElement>(null)
+  const imageRef = useRef<HTMLImageElement>(null)
   const highlightRef = useRef<HTMLButtonElement>(null)
   const [state, setState] = useState<'loading' | 'ready' | 'error'>('loading')
 
   useEffect(() => {
-    if (pageImagePath) setState('loading')
+    if (!pageImagePath) return
+    setState('loading')
+    const image = imageRef.current
+    if (image?.complete) {
+      setState(image.naturalWidth > 0 ? 'ready' : 'error')
+    }
   }, [pageImagePath])
 
   useEffect(() => {
@@ -118,6 +124,7 @@ export function PdfPage({
       >
         {pageImagePath ? (
           <Image
+            ref={imageRef}
             className="pdf-page-image"
             src={pageImagePath}
             width={1190}

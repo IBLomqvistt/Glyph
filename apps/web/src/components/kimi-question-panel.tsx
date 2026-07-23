@@ -1,7 +1,8 @@
 'use client'
 
-import { useId, useState, type FormEvent } from 'react'
-import { AlertTriangle, LoaderCircle, Sparkles } from 'lucide-react'
+import Image from 'next/image'
+import { useEffect, useId, useRef, useState, type FormEvent } from 'react'
+import { AlertTriangle, LoaderCircle, Sparkles, X } from 'lucide-react'
 import { Button, Card } from '@glyph/ui'
 import {
   isKimiQuestionResponse,
@@ -9,16 +10,25 @@ import {
   kimiQuestionMinLength,
   type KimiQuestionResponse,
 } from '@/lib/kimi-question-contract'
-import { kimiEvidenceMappings } from '@/lib/kimi-reader-content'
+import { kimiEvidenceSpans } from '@/lib/report-catalog'
 
-type KimiEvidenceId = keyof typeof kimiEvidenceMappings
+type KimiEvidenceId = (typeof kimiEvidenceSpans)[number]['id']
+const evidenceById = new Map(
+  kimiEvidenceSpans.map((evidence, index) => [
+    evidence.id,
+    { ...evidence, number: index + 1 },
+  ]),
+)
 
 function isKimiEvidenceId(value: string): value is KimiEvidenceId {
-  return value in kimiEvidenceMappings
+  return evidenceById.has(value)
 }
 
 function friendlyError(status: number): string {
   if (status === 400) return 'Ask a question between 3 and 500 characters.'
+  if (status === 429) {
+    return 'This report has reached its public question limit for now.'
+  }
   if (status === 503) {
     return 'Live Glyph analysis is not available in this environment.'
   }
@@ -27,20 +37,48 @@ function friendlyError(status: number): string {
 
 export function KimiQuestionPanel({
   slug,
-  activeEvidenceId,
+  activeEvidenceId = null,
   onSelectEvidence,
 }: {
   slug: string
-  activeEvidenceId: KimiEvidenceId | null
-  onSelectEvidence: (evidenceId: KimiEvidenceId) => void
+  activeEvidenceId?: KimiEvidenceId | null
+  onSelectEvidence?: (evidenceId: KimiEvidenceId) => void
 }): React.JSX.Element {
   const questionId = useId()
+  const questionRef = useRef<HTMLTextAreaElement>(null)
+  const [isOpen, setIsOpen] = useState(false)
+  const [selectedPassage, setSelectedPassage] = useState<string | null>(null)
   const [question, setQuestion] = useState('')
   const [status, setStatus] = useState<
     'idle' | 'loading' | 'success' | 'error'
   >('idle')
   const [answer, setAnswer] = useState<KimiQuestionResponse | null>(null)
   const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    const receiveSelection = (event: Event): void => {
+      const selectedText = (
+        event as CustomEvent<{ text?: string }>
+      ).detail?.text
+        ?.replace(/\s+/gu, ' ')
+        .trim()
+        .slice(0, 320)
+      if (!selectedText) return
+      setSelectedPassage(selectedText)
+      setIsOpen(true)
+      setQuestion((current) =>
+        current.trim() ? current : 'Explain why this matters for an investor.',
+      )
+      window.setTimeout(() => questionRef.current?.focus(), 0)
+    }
+    window.addEventListener('glyph:selection', receiveSelection)
+    return () => window.removeEventListener('glyph:selection', receiveSelection)
+  }, [])
+
+  function setGlyphMode(active: boolean): void {
+    setIsOpen(active)
+    window.dispatchEvent(new CustomEvent('glyph:mode', { detail: { active } }))
+  }
 
   async function submitQuestion(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
@@ -58,11 +96,17 @@ export function KimiQuestionPanel({
     setStatus('loading')
     setAnswer(null)
     setError(null)
+    const selectionBudget =
+      kimiQuestionMaxLength - normalizedQuestion.length - 40
+    const requestQuestion =
+      selectedPassage && selectionBudget > 24
+        ? `Report passage: "${selectedPassage.slice(0, selectionBudget)}"\nQuestion: ${normalizedQuestion}`
+        : normalizedQuestion
     try {
       const response = await fetch(`/api/reports/${slug}/questions`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ question: normalizedQuestion }),
+        body: JSON.stringify({ question: requestQuestion }),
         cache: 'no-store',
       })
       const payload: unknown = await response.json().catch(() => null)
@@ -84,22 +128,81 @@ export function KimiQuestionPanel({
     }
   }
 
+  if (!isOpen) {
+    return (
+      <div className="glyph-launcher-shell">
+        <button
+          type="button"
+          className="glyph-launcher"
+          aria-label="Glyph it"
+          aria-expanded="false"
+          aria-controls={`${questionId}-panel`}
+          onClick={() => setGlyphMode(true)}
+        >
+          <Image
+            src="/assets/glyph/glyph-mascot-v2.png"
+            alt=""
+            width={46}
+            height={46}
+            loading="eager"
+          />
+          <span>
+            <strong>Glyph it</strong>
+            <small>Open Glyph, then highlight anything in the report</small>
+          </span>
+        </button>
+      </div>
+    )
+  }
+
   return (
     <Card
-      className="kimi-question-panel"
+      id={`${questionId}-panel`}
+      className="kimi-question-panel is-open"
       aria-labelledby={`${questionId}-title`}
     >
       <div className="kimi-question-heading">
-        <span className="kimi-question-mark" aria-hidden="true">
-          <Sparkles size={19} />
-        </span>
+        <Image
+          className="kimi-question-mascot"
+          src="/assets/glyph/glyph-mascot-v2.png"
+          alt=""
+          width={52}
+          height={52}
+          loading="eager"
+        />
         <div>
           <h2 id={`${questionId}-title`}>Glyph it</h2>
           <p>
-            Ask the source. Every answer must link to an exact mapped passage.
+            Highlight report text, then ask. Answers stay tied to mapped source
+            evidence.
           </p>
         </div>
+        <button
+          type="button"
+          className="kimi-question-close"
+          aria-label="Close Glyph"
+          onClick={() => setGlyphMode(false)}
+        >
+          <X aria-hidden="true" size={18} />
+        </button>
       </div>
+
+      {selectedPassage ? (
+        <div className="kimi-selected-passage">
+          <div>
+            <span>Selected report text</span>
+            <button type="button" onClick={() => setSelectedPassage(null)}>
+              Clear
+            </button>
+          </div>
+          <blockquote>{selectedPassage}</blockquote>
+        </div>
+      ) : (
+        <p className="kimi-selection-prompt">
+          Selection mode is on. Highlight a sentence or paragraph inside the
+          report.
+        </p>
+      )}
 
       <form
         className="kimi-question-form"
@@ -109,6 +212,7 @@ export function KimiQuestionPanel({
           Ask a question about the Kimi K3 source
         </label>
         <textarea
+          ref={questionRef}
           id={questionId}
           value={question}
           onChange={(event) => setQuestion(event.target.value)}
@@ -117,7 +221,11 @@ export function KimiQuestionPanel({
           rows={2}
           required
           disabled={status === 'loading'}
-          placeholder="What does the source support about K3's expert routing?"
+          placeholder={
+            selectedPassage
+              ? 'What do you want to understand about this passage?'
+              : 'Ask about a claim or mechanism'
+          }
         />
         <Button type="submit" disabled={status === 'loading'}>
           {status === 'loading' ? (
@@ -128,7 +236,7 @@ export function KimiQuestionPanel({
           ) : (
             <Sparkles aria-hidden="true" />
           )}
-          {status === 'loading' ? 'Checking evidence…' : 'Glyph it'}
+          {status === 'loading' ? 'Checking evidence…' : 'Ask Glyph'}
         </Button>
       </form>
 
@@ -156,7 +264,7 @@ export function KimiQuestionPanel({
               <p>{answer.answerText}</p>
             ) : (
               <p>
-                The two mapped source passages do not directly answer this
+                The validated source passages do not directly answer this
                 question. Glyph will not fill the gap with a plausible fallback.
               </p>
             )}
@@ -168,21 +276,32 @@ export function KimiQuestionPanel({
                 <span>Exact source</span>
                 {answer.evidenceIds
                   .filter(isKimiEvidenceId)
-                  .map((evidenceId) => (
-                    <button
-                      key={evidenceId}
-                      type="button"
-                      className={
-                        activeEvidenceId === evidenceId
-                          ? 'is-active'
-                          : undefined
-                      }
-                      aria-label={`Open cited source passage ${kimiEvidenceMappings[evidenceId].number}`}
-                      onClick={() => onSelectEvidence(evidenceId)}
-                    >
-                      {kimiEvidenceMappings[evidenceId].number}
-                    </button>
-                  ))}
+                  .map((evidenceId) => {
+                    const evidence = evidenceById.get(evidenceId)
+                    if (!evidence) return null
+                    return (
+                      <button
+                        key={evidenceId}
+                        type="button"
+                        className={
+                          activeEvidenceId === evidenceId
+                            ? 'is-active'
+                            : undefined
+                        }
+                        aria-label={`Open cited source passage ${evidence.number}`}
+                        onClick={() => {
+                          onSelectEvidence?.(evidenceId)
+                          window.dispatchEvent(
+                            new CustomEvent('glyph:open-evidence', {
+                              detail: { evidenceId },
+                            }),
+                          )
+                        }}
+                      >
+                        {evidence.number}
+                      </button>
+                    )
+                  })}
               </div>
             ) : null}
             <small>
@@ -193,6 +312,9 @@ export function KimiQuestionPanel({
                   minute: '2-digit',
                 })}
               </time>
+              {' · '}
+              {answer.quota.sessionReportDailyLimit} public questions per
+              report/day
             </small>
           </div>
         ) : null}

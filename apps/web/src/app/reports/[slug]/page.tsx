@@ -1,119 +1,160 @@
+import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound, redirect } from 'next/navigation'
-import { ArrowRight, Bookmark, BookOpen, Clock3 } from 'lucide-react'
+import { ArrowRight, Bookmark, Clock3, ExternalLink } from 'lucide-react'
 import { Badge, Card } from '@glyph/ui'
+import { ContinuousPdfViewer } from '@/components/continuous-pdf-viewer'
+import { KimiQuestionPanel } from '@/components/kimi-question-panel'
+import { ReportTabViewer } from '@/components/report-tab-viewer'
 import { featuredReport } from '@/lib/featured-report'
+import { kimiEvidenceSpans, kimiPaperVersion } from '@/lib/report-catalog'
 import { DemoAuthGateway } from '@/server/demo-auth'
+import { reportPackageBySlug } from '@/server/report-packages'
 
-export default async function ReportLanding({
+export const dynamic = 'force-dynamic'
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>
+}): Promise<Metadata> {
+  const { slug } = await params
+  const reportPackage = await reportPackageBySlug(slug)
+  if (!reportPackage) return { title: 'Report unavailable' }
+  return {
+    title: reportPackage.metadata.title,
+    description: reportPackage.metadata.description,
+    alternates: { canonical: `/reports/${reportPackage.slug}` },
+  }
+}
+
+export default async function ReportPage({
   params,
 }: {
   params: Promise<{ slug: string }>
 }): Promise<React.JSX.Element> {
   const { slug } = await params
+  if (slug === 'archive-preview') return <ArchivePreview />
+  if (slug === 'agent-swarm-demo') redirect(`/reports/${featuredReport.slug}`)
 
-  if (slug === 'archive-preview') {
-    return <ArchivePreview />
-  }
-  if (slug === 'agent-swarm-demo') {
-    redirect(`/reports/${featuredReport.slug}`)
-  }
-  if (slug !== featuredReport.slug) notFound()
+  const reportPackage = await reportPackageBySlug(slug)
+  if (!reportPackage || reportPackage.status !== 'APPROVED') notFound()
+  if (reportPackage.paperVersionId !== kimiPaperVersion.id) notFound()
 
   return (
-    <div className="page report-landing">
-      <header className="report-hero">
-        <div className="report-heading">
-          <span className="eyebrow">{featuredReport.statusLabel}</span>
-          <h1>{featuredReport.title}</h1>
+    <div className="structured-report-page">
+      <header className="structured-report-header">
+        <div>
+          <span className="eyebrow">Glyph research · approved package</span>
+          <h1>{reportPackage.metadata.title}</h1>
+          <p className="structured-report-description">
+            {reportPackage.metadata.description}
+          </p>
           <div className="metadata-row">
-            <span>{featuredReport.provider}</span>
-            <span>{featuredReport.authors.join(', ')}</span>
-            <time dateTime={featuredReport.publicationDate}>
-              {featuredReport.publicationDate}
+            <span>{reportPackage.metadata.provider}</span>
+            <time dateTime={reportPackage.metadata.publicationDate}>
+              {reportPackage.metadata.publicationDate}
             </time>
             <span>
-              <Clock3 aria-hidden="true" size={14} />{' '}
-              {featuredReport.readingTimeMinutes} min read
+              <Clock3 aria-hidden="true" />{' '}
+              {reportPackage.metadata.readingTimeMinutes} min
             </span>
+            {reportPackage.metadata.originalUrl ? (
+              <a
+                href={reportPackage.metadata.originalUrl}
+                target="_blank"
+                rel="noreferrer"
+              >
+                Original source <ExternalLink aria-hidden="true" />
+              </a>
+            ) : null}
           </div>
-          <div className="chip-row">
-            {featuredReport.topicLabels.map((label) => (
-              <Badge key={label} tone="violet">
-                {label}
-              </Badge>
-            ))}
-          </div>
+          {reportPackage.sources.length > 0 ? (
+            <nav
+              className="structured-report-sources"
+              aria-label="Report sources"
+            >
+              <span>Sources</span>
+              {reportPackage.sources.slice(0, 4).map((source) =>
+                source.url ? (
+                  <a
+                    key={source.id}
+                    href={source.url}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    {source.label} <ExternalLink aria-hidden="true" />
+                  </a>
+                ) : (
+                  <span key={source.id}>{source.label}</span>
+                ),
+              )}
+            </nav>
+          ) : null}
         </div>
+        <Badge tone="violet">Provisional launch analysis</Badge>
       </header>
 
-      <div className="report-overview-grid">
-        <Card className="selection-card report-overview-main">
-          <div>
-            <span className="eyebrow">What this report examines</span>
-            <p>{featuredReport.summary}</p>
-          </div>
-          <div>
-            <span className="eyebrow">Core research question</span>
-            <p>
-              Which Kimi K3 efficiency claims are supported by the supplied
-              launch evidence, and which still require independent validation?
-            </p>
-          </div>
-          <div>
-            <span className="eyebrow">Largest uncertainty</span>
-            <p>
-              Several architecture results were demonstrated at smaller scale;
-              the supplied source does not independently isolate their effect at
-              Kimi K3&apos;s full scale.
-            </p>
-          </div>
-        </Card>
-
-        <Card className="key-facts">
-          <h2>Key facts</h2>
-          <dl>
-            <div>
-              <dt>Source</dt>
-              <dd>{featuredReport.sourceTitle}</dd>
-            </div>
-            <div>
-              <dt>Provider</dt>
-              <dd>{featuredReport.provider}</dd>
-            </div>
-            <div>
-              <dt>PDF pages</dt>
-              <dd>{featuredReport.pageCount}</dd>
-            </div>
-            <div>
-              <dt>Approval</dt>
-              <dd>Provisional · human review required</dd>
-            </div>
-          </dl>
-        </Card>
+      <div className="structured-report-workspace">
+        <ContinuousPdfViewer
+          title={reportPackage.metadata.title}
+          pdfPath={kimiPaperVersion.assetPath}
+          pageCount={kimiPaperVersion.pageCount}
+          pageImageBasePath="/papers/kimi-k3-pages"
+          evidenceSpans={kimiEvidenceSpans}
+          annotations={kimiPdfAnnotations}
+        />
+        <main className="structured-report-reading">
+          <KimiQuestionPanel slug={reportPackage.slug} />
+          <ReportTabViewer reportPackage={reportPackage} />
+        </main>
       </div>
-
-      <nav className="report-entry-grid" aria-label="Report destinations">
-        <Link href={featuredReport.reportPath}>
-          <BookOpen aria-hidden="true" /> <span>Read report</span>
-          <ArrowRight aria-hidden="true" />
-        </Link>
-        <a href={featuredReport.pdfPath}>
-          <FileSourceIcon /> <span>View source PDF</span>
-          <ArrowRight aria-hidden="true" />
-        </a>
-        <a href={featuredReport.originalUrl} target="_blank" rel="noreferrer">
-          <FileSourceIcon /> <span>Original Kimi blog</span>
-          <ArrowRight aria-hidden="true" />
-        </a>
-        <Link href="/reports/archive-preview">
-          <Bookmark aria-hidden="true" /> <span>Archive access</span>
-          <ArrowRight aria-hidden="true" />
-        </Link>
-      </nav>
     </div>
   )
 }
+
+const kimiPdfAnnotations = [
+  {
+    id: 'note-scale',
+    evidenceId: 'evidence-model-scale',
+    text: '2.8T is total capacity. It does not tell you activated parameters, memory footprint, or cost per token.',
+  },
+  {
+    id: 'note-release',
+    evidenceId: 'evidence-pending-technical-report',
+    text: 'Weights and the technical report were promised for July 27. Until then, key implementation details remain unverified.',
+  },
+  {
+    id: 'note-routing',
+    evidenceId: 'evidence-routing',
+    text: '16-of-896 reduces arithmetic. The 2.5× figure is Moonshot’s scaling-efficiency claim, not a disclosed training-cost reduction.',
+  },
+  {
+    id: 'note-attention',
+    evidenceId: 'evidence-kda-attnres',
+    text: 'KDA controls memory across tokens. AttnRes retrieves across layers. Quantile Balancing targets expert-load imbalance. K3 does not isolate their individual contributions.',
+  },
+  {
+    id: 'note-serving',
+    evidenceId: 'evidence-serving-system',
+    text: 'MXFP4 cuts memory traffic, but Moonshot still recommends 64-plus accelerators. Efficient does not mean easy or cheap to self-host.',
+  },
+  {
+    id: 'note-price',
+    evidenceId: 'evidence-api-economics',
+    text: 'The 10× cache discount matters only when context is reused. The reported 90% coding-workload hit rate is a provider claim.',
+  },
+  {
+    id: 'note-benchmark',
+    evidenceId: 'evidence-benchmark-harness',
+    text: 'Results use maximum reasoning and different agent harnesses. The comparisons are not harness-neutral.',
+  },
+  {
+    id: 'note-limitation',
+    evidenceId: 'evidence-limitations',
+    text: 'Quality depends on preserving prior thinking state. Session handoffs and model switching are explicit failure modes.',
+  },
+] as const
 
 async function ArchivePreview(): Promise<React.JSX.Element> {
   const user = await new DemoAuthGateway().currentUser()
@@ -149,13 +190,5 @@ async function ArchivePreview(): Promise<React.JSX.Element> {
         </div>
       </Card>
     </div>
-  )
-}
-
-function FileSourceIcon(): React.JSX.Element {
-  return (
-    <span className="source-icon" aria-hidden="true">
-      PDF
-    </span>
   )
 }

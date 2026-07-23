@@ -78,7 +78,10 @@ export function AppShell({
   const pathname = usePathname()
   const router = useRouter()
   const publicEntryRoute = pathname === '/' || pathname === '/login'
-  const readerRoute = pathname.startsWith('/reader/')
+  const readerRoute =
+    pathname.startsWith('/reader/') ||
+    (/^\/reports\/[^/]+$/u.test(pathname) &&
+      pathname !== '/reports/archive-preview')
   const [readerNavigationCollapsed, setReaderNavigationCollapsed] =
     useState(false)
 
@@ -155,6 +158,7 @@ export function AppShell({
             alt=""
             width={56}
             height={56}
+            loading="eager"
           />
         </Link>
         <Sheet>
@@ -182,6 +186,7 @@ export function AppShell({
             alt=""
             width={48}
             height={48}
+            loading="eager"
           />
           <span>Glyph</span>
         </Link>

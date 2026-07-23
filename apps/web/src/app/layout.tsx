@@ -16,7 +16,7 @@ export default async function RootLayout({
 }: Readonly<{ children: React.ReactNode }>): Promise<React.JSX.Element> {
   const user = await new DemoAuthGateway().currentUser()
   return (
-    <html lang="en">
+    <html lang="en" data-scroll-behavior="smooth">
       <body>
         <AppShell role={user.role}>{children}</AppShell>
       </body>

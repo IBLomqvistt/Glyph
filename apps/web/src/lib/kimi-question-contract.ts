@@ -1,13 +1,22 @@
-export const kimiQuestionMinLength = 3
-export const kimiQuestionMaxLength = 500
+export const reportQuestionMinLength = 3
+export const reportQuestionMaxLength = 500
+export const kimiQuestionMinLength = reportQuestionMinLength
+export const kimiQuestionMaxLength = reportQuestionMaxLength
 
-export type KimiQuestionResponse = {
+export type ReportQuestionResponse = {
   outcome: 'ANSWER' | 'INSUFFICIENT_EVIDENCE'
   answerText: string | null
   evidenceIds: string[]
   model: string
   timestamp: string
+  requestId: string
+  quota: {
+    sessionReportDailyLimit: number
+    ipDailyLimit: number
+  }
 }
+
+export type KimiQuestionResponse = ReportQuestionResponse
 
 export function isKimiQuestionResponse(
   value: unknown,
@@ -25,7 +34,18 @@ export function isKimiQuestionResponse(
     !Array.isArray(evidenceIds) ||
     !evidenceIds.every((id) => typeof id === 'string') ||
     typeof record.model !== 'string' ||
-    typeof record.timestamp !== 'string'
+    typeof record.timestamp !== 'string' ||
+    typeof record.requestId !== 'string' ||
+    typeof record.quota !== 'object' ||
+    record.quota === null ||
+    Array.isArray(record.quota)
+  ) {
+    return false
+  }
+  const quota = record.quota as Record<string, unknown>
+  if (
+    typeof quota.sessionReportDailyLimit !== 'number' ||
+    typeof quota.ipDailyLimit !== 'number'
   ) {
     return false
   }

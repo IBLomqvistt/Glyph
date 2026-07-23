@@ -1,19 +1,18 @@
-# Kimi K3 content pack
+# Kimi K3 evidence tooling
 
-This directory preserves the user-supplied source material for Glyph's first
-real report example.
+This directory retains the deterministic utility used to locate exact evidence
+passages in the Kimi K3 source PDF.
 
-- `source.html` is the editable report source.
-- `build.py` converts the twelve concept cards to closed disclosure elements,
-  validates the resulting HTML, and writes `report.html`.
-- `report.html` is the reviewed report used by the web reader.
-- The corresponding source PDF is copied to
-  `apps/web/public/papers/kimi-k3-tech-blog.pdf`.
 - `extract_evidence_boxes.py` resolves exact phrases in that PDF to normalized
-  page boxes. Its checked values live in `apps/web/src/lib/kimi-reader-content.ts`.
-- `apps/web/public/papers/kimi-k3-pages/` contains deterministic 2× PNG renders
-  of all 21 PDF pages; the original PDF remains the canonical download asset.
+  page boxes. Its reviewed values live in
+  `apps/web/src/lib/report-catalog.ts`.
+- The canonical source PDF is
+  `apps/web/public/papers/kimi-k3-tech-blog.pdf`.
+- `apps/web/public/papers/kimi-k3-pages/` contains deterministic 2x PNG renders
+  of all 21 PDF pages.
+- The reviewed Claude HTML source is imported through the same structural
+  pipeline as future reports. It is not a second reader implementation.
 
-The report remains a provisional launch analysis dated 21 July 2026. Its own
-source register distinguishes Moonshot claims, independent measurements, and
-Glyph interpretation. Publication still requires human approval.
+The report remains a provisional launch analysis dated 21 July 2026. The
+approved package distinguishes author claims, independent evidence, Glyph
+interpretation, and insufficient evidence.

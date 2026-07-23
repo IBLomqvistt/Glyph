@@ -258,6 +258,7 @@ export class OpenAiImageGateway implements IllustrationGenerationGateway {
 export type StructuredResponseRequest = {
   model: string
   input: string
+  max_output_tokens?: number
   instructions?: string
   reasoning?: {
     effort: 'low'
@@ -373,6 +374,7 @@ export class OpenAiResponsesGateway implements AiGenerationGateway {
         ? {
             instructions: answerQuestionInstructions,
             reasoning: { effort: 'low' as const },
+            max_output_tokens: 350,
           }
         : {}),
       text: {

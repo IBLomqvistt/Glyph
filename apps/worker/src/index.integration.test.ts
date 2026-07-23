@@ -1,4 +1,5 @@
 import { describe, expect, it, vi } from 'vitest'
+import { fileURLToPath } from 'node:url'
 import { InMemoryPipelineRunRepository } from '@glyph/application'
 import { LocalJobRunner, runDemoPipeline } from './index'
 import { LocalFixtureAssetStore } from './local-asset-store'
@@ -67,7 +68,7 @@ describe('local pipeline', () => {
       import.meta.url,
     )
     const store = new LocalFixtureAssetStore(
-      new Map([['glyph-agent-swarm-demo-v1', fixturePath.pathname]]),
+      new Map([['glyph-agent-swarm-demo-v1', fileURLToPath(fixturePath)]]),
     )
     expect(
       (await store.getPdfBytes('glyph-agent-swarm-demo-v1'))?.length,
