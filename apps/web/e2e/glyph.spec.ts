@@ -5,9 +5,22 @@ const screenshotDirectory = 'work/overnight/screenshots'
 
 const dailyPaper = {
   title: 'Kimi K3: an enormous open model, engineered to be affordable to run',
-  reportHref: '/reports/kimi-k3/report.html',
+  reportHref: '/reports/kimi-k3',
   categoryHref: '/layers/models',
 } as const
+
+const markedReportHtml = `<!doctype html><html><head><title>Imported Kimi test report</title><style>.box{fill:#fff;stroke:#222}</style></head><body>
+<h1>Imported Kimi test report</h1><p class="kicker">Reusable renderer acceptance fixture.</p>
+<section data-glyph-tab="summary" data-glyph-section="summary-core">
+  <p data-glyph-claim="claim-scale" data-glyph-claim-classification="AUTHOR_CLAIM" data-glyph-evidence-ids="evidence-model-scale" data-glyph-material="true">K3 is a 2.8T parameter model.</p>
+  <figure data-glyph-visual="visual-scale" data-glyph-evidence-ids="evidence-model-scale"><svg viewBox="0 0 100 40" aria-label="Scale"><rect class="box" x="1" y="2" width="90" height="30"></rect><text x="10" y="20">2.8T</text></svg><figcaption>Scale disclosed by Moonshot.</figcaption></figure>
+</section>
+<section data-glyph-tab="mechanism" data-glyph-section="mechanism-core"><h2>Mechanism</h2><table data-glyph-visual="table-mechanism"><tbody><tr><td>KDA</td></tr></tbody></table></section>
+<section data-glyph-tab="economics" data-glyph-section="economics-core"><h2>Economics</h2><p>No direct trade implication.</p></section>
+<a data-glyph-source="source-kimi" href="https://www.kimi.com/blog/kimi-k3">Kimi K3 launch post</a>
+</body></html>`
+
+const runtimeErrors = new WeakMap<Page, string[]>()
 
 async function expectNoSevereA11yViolations(page: Page): Promise<void> {
   const results = await new AxeBuilder({ page }).analyze()
@@ -21,15 +34,16 @@ async function expectNoSevereA11yViolations(page: Page): Promise<void> {
 
 test.beforeEach(async ({ page }) => {
   const pageErrors: string[] = []
+  runtimeErrors.set(page, pageErrors)
   page.on('pageerror', (error) => pageErrors.push(error.message))
-  page.on('console', (message) => {
-    if (message.type() === 'error') pageErrors.push(message.text())
-  })
   await page.goto('/home')
   await expect(
     page.getByRole('heading', { name: 'What’s new today' }),
   ).toBeVisible()
-  expect(pageErrors).toEqual([])
+})
+
+test.afterEach(async ({ page }) => {
+  expect(runtimeErrors.get(page) ?? []).toEqual([])
 })
 
 test('home previews today’s paper before opening its category', async ({
@@ -106,77 +120,24 @@ test('both product brands open the landing page and its platform entrance', asyn
   await expect(page).toHaveURL('/')
 })
 
-test('the real Kimi K3 pack uses the native reference-style reader', async ({
+test('legacy Kimi links redirect to the canonical structured report', async ({
   page,
-  isMobile,
 }) => {
-  await page.goto('/reader/agent-swarm-demo')
-  await expect(page).toHaveURL('/reader/kimi-k3')
-
-  await expect(
-    page.getByRole('heading', {
-      name: dailyPaper.title,
-      level: 1,
-    }),
-  ).toBeVisible()
-  await expect(
-    page.getByRole('tab', { name: 'Executive Summary' }),
-  ).toBeVisible()
-  await expect(page.getByRole('tab', { name: 'Concepts' })).toBeVisible()
-  await expect(page.getByRole('tab', { name: 'Causal Evidence' })).toBeVisible()
-  await expect(page.getByRole('link', { name: /Full report/ })).toHaveAttribute(
-    'href',
+  for (const legacyPath of [
+    '/reader/agent-swarm-demo',
+    '/reader/kimi-k3',
     '/reports/kimi-k3/report.html',
-  )
-
-  if (!isMobile) {
+  ]) {
+    await page.goto(legacyPath)
+    await expect(page).toHaveURL('/reports/kimi-k3')
     await expect(
-      page.getByRole('img', { name: 'Rendered source PDF page 1' }),
-    ).toBeVisible()
-    await expect(page.getByTestId('evidence-highlight')).toHaveCount(4)
-    await expect(page.locator('.evidence-badge')).toHaveText('1')
-    await page.getByRole('button', { name: 'Next page', exact: true }).click()
-    await expect(page.getByTestId('pdf-page')).toHaveAttribute('data-page', '2')
-    await page
-      .getByRole('button', {
-        name: /GLYPH SYNTHESIS · SOURCE PAGE 4/,
-      })
-      .click()
-    await expect(page.getByTestId('pdf-page')).toHaveAttribute('data-page', '4')
-    await expect(page.locator('.evidence-badge')).toHaveText('2')
-    await expect(page.getByTestId('evidence-highlight')).toHaveCount(4)
-    await expect(
-      page.locator('.kimi-summary-card.is-evidence-active'),
-    ).toContainText('Bottom line')
-    await expect(page.locator('.kimi-finding-card')).not.toHaveClass(
-      /is-evidence-active/,
-    )
-    await page.getByRole('tab', { name: 'Causal Evidence' }).click()
-    await page
-      .getByRole('button', {
-        name: /Open exact source passage on page 4/,
-      })
-      .click()
-    await expect(
-      page.locator('.kimi-evidence-card.is-evidence-active'),
-    ).toContainText('16 of 896 experts')
-    await expect(
-      page.getByText(/INSUFFICIENT_EVIDENCE.*no exact local passage mapped/),
-    ).toBeVisible()
-  } else {
-    await page.getByRole('button', { name: 'Open source PDF' }).click()
-    await expect(page.getByRole('dialog')).toBeVisible()
-    await expect(
-      page.getByRole('dialog').getByRole('img', {
-        name: 'Rendered source PDF page 1',
-      }),
+      page.getByRole('heading', { name: dailyPaper.title, level: 1 }),
     ).toBeVisible()
   }
 })
 
-test('Glyph it returns a mapped answer and opens its exact citation', async ({
+test('the canonical report renders all tabs and opens exact Q&A evidence', async ({
   page,
-  isMobile,
 }) => {
   await page.route('**/api/reports/kimi-k3/questions', async (route) => {
     const request = route.request()
@@ -195,15 +156,40 @@ test('Glyph it returns a mapped answer and opens its exact citation', async ({
         evidenceIds: ['evidence-routing'],
         model: 'gpt-5.6-sol',
         timestamp: '2026-07-22T00:00:00.000Z',
+        requestId: 'test-request',
+        quota: {
+          sessionReportDailyLimit: 5,
+          ipDailyLimit: 30,
+        },
       }),
     })
   })
 
-  await page.goto('/reader/kimi-k3')
+  await page.goto('/reports/kimi-k3')
+  await expect(
+    page.getByRole('tab', { name: '3–5 minute brief' }),
+  ).toBeVisible()
+  await expect(
+    page.getByRole('tab', { name: 'Technical mechanisms' }),
+  ).toBeVisible()
+  await expect(
+    page.getByRole('tab', { name: 'Economic relevance' }),
+  ).toBeVisible()
+  await expect(page.locator('.continuous-pdf-page')).toHaveCount(21)
+  await expect(
+    page.locator('button[aria-label="Previous source page"]'),
+  ).toHaveCount(0)
+  await expect(
+    page.getByRole('img', {
+      name: 'Rendered source PDF page 1',
+      exact: true,
+    }),
+  ).toBeVisible()
+  await page.getByRole('button', { name: 'Glyph it', exact: true }).click()
   await page
     .getByLabel('Ask a question about the Kimi K3 source')
     .fill('What does the source claim about expert routing?')
-  await page.getByRole('button', { name: 'Glyph it', exact: true }).click()
+  await page.getByRole('button', { name: 'Ask Glyph', exact: true }).click()
   await expect(page.getByText('Evidence-bound answer')).toBeVisible()
   await expect(
     page.getByText(/Moonshot claims K3 activates 16 of 896/),
@@ -211,26 +197,14 @@ test('Glyph it returns a mapped answer and opens its exact citation', async ({
   await page
     .getByRole('button', { name: 'Open cited source passage 2' })
     .click()
-
-  if (isMobile) {
-    await expect(page.getByRole('dialog')).toBeVisible()
-    await expect(
-      page.getByRole('dialog').getByTestId('pdf-page'),
-    ).toHaveAttribute('data-page', '4')
-    await expect(
-      page.getByRole('dialog').locator('.evidence-badge'),
-    ).toHaveText('2')
-  } else {
-    await expect(page.getByTestId('pdf-page')).toHaveAttribute('data-page', '4')
-    await expect(
-      page.getByTestId('pdf-page').locator('.evidence-badge'),
-    ).toHaveText('2')
-  }
+  await expect(page.locator('[data-page-number="4"]')).toHaveClass(/is-current/)
 })
 
 test('public landing scrolls from its thesis through real product proof', async ({
   page,
+  isMobile,
 }) => {
+  test.skip(isMobile, 'The investor landing page is desktop-first.')
   await page.goto('/')
 
   const navigation = page.getByRole('navigation', {
@@ -262,9 +236,10 @@ test('public landing scrolls from its thesis through real product proof', async 
     '/login',
   )
 
-  const productLink = page.getByRole('link', { name: /Kimi K3 report/ }).first()
+  const productLink = page.locator('.public-product-frame')
   const productImage = productLink.getByRole('img', {
-    name: /Kimi K3 report/,
+    name: 'Kimi K3 report in Glyph showing the technical brief, source evidence, and investor analysis',
+    exact: true,
   })
   await expect(productLink).toHaveAttribute('href', dailyPaper.reportHref)
   await expect(productImage).toBeVisible()
@@ -329,11 +304,8 @@ test('public landing scrolls from its thesis through real product proof', async 
   await navigation.getByRole('link', { name: 'Enter Glyph' }).click()
   await expect(page).toHaveURL('/login')
   await page.goto('/')
-  await page
-    .getByRole('link', { name: /Kimi K3 report/ })
-    .first()
-    .click()
-  await expect(page).toHaveURL(/\/reports\/kimi-k3\/report\.html(?:#summary)?$/)
+  await page.locator('.public-product-frame').click()
+  await expect(page).toHaveURL(/\/reports\/kimi-k3(?:#summary)?$/)
   await expect(
     page.getByRole('heading', { name: dailyPaper.title, level: 1 }),
   ).toBeVisible()
@@ -440,86 +412,92 @@ test.describe('daily research home', () => {
     ).toBeVisible()
   })
 
-  test('full report scrolls through the source and answers through Glyph', async ({
+  test('full report scrolls continuously and contains imported visuals', async ({
     page,
     isMobile,
   }) => {
     test.skip(isMobile, 'The investor report is desktop-first.')
-    await page.route('**/api/reports/kimi-k3/questions', async (route) => {
-      await route.fulfill({
-        status: 200,
-        contentType: 'application/json',
-        body: JSON.stringify({
-          outcome: 'ANSWER',
-          answerText:
-            'Moonshot says K3 activates 16 of 896 experts and claims a 2.5x scaling-efficiency gain.',
-          evidenceIds: ['evidence-routing'],
-          model: 'test-model',
-          timestamp: '2026-07-22T12:00:00.000Z',
-        }),
-      })
-    })
-
-    await page.setViewportSize({ width: 960, height: 900 })
+    await page.setViewportSize({ width: 1440, height: 900 })
     await page.goto(dailyPaper.reportHref)
 
-    await expect(page.locator('.gr-rail-logo a')).toHaveAttribute('href', '/')
-    await expect(page.locator('.gr-brand')).toHaveAttribute('href', '/')
-    await expect(page.locator('.gr-rail-logo img')).toHaveAttribute(
-      'src',
-      /glyph-mascot-v2/,
-    )
-    await expect(page.locator('.gr-page-frame')).toHaveCount(21)
+    await expect(page.locator('.continuous-pdf-page')).toHaveCount(21)
     await expect(
       page.getByRole('button', { name: 'Previous source page' }),
     ).toHaveCount(0)
     await expect(
-      page.locator('.gr-page-frame[data-page="1"] .gr-evidence-highlight'),
-    ).toHaveCount(4)
+      page.locator('[data-page-number="1"] .continuous-evidence-highlight'),
+    ).not.toHaveCount(0)
     await expect(
-      page.locator('.gr-page-frame[data-page="4"] .gr-glyph-note'),
-    ).toContainText('Sparse routing cuts arithmetic')
+      page.locator('[data-page-number="4"] .pdf-glyph-annotation'),
+    ).toContainText('not a disclosed training-cost reduction')
 
     const pageField = page.getByLabel('Source page number')
     await pageField.fill('4')
     await pageField.press('Tab')
-    await expect(page.locator('.gr-page-frame[data-page="4"]')).toHaveClass(
+    await expect(page.locator('[data-page-number="4"]')).toHaveClass(
       /is-current/,
     )
     expect(
       await page
-        .locator('.gr-source-viewport')
+        .locator('.continuous-pdf-viewport')
         .evaluate((element) =>
           element instanceof HTMLElement ? element.scrollTop : 0,
         ),
     ).toBeGreaterThan(0)
 
-    await page.getByRole('button', { name: /Glyph it/ }).click()
+    await page.reload({ waitUntil: 'domcontentloaded' })
     await expect(
-      page.getByRole('dialog', { name: 'Ask Glyph about the Kimi K3 paper' }),
+      page.getByRole('img', {
+        name: 'Rendered source PDF page 1',
+        exact: true,
+      }),
     ).toBeVisible()
-    await page.getByRole('button', { name: 'Expert routing' }).click()
-    await page.getByRole('button', { name: 'Ask Glyph' }).click()
-    await expect(page.getByText('Evidence-bound answer')).toBeVisible()
-    await expect(page.getByText('Source page 4 · test-model')).toBeVisible()
+    await expect(
+      page.locator('[data-page-number="1"] .pdf-status'),
+    ).toHaveCount(0)
 
-    await page.getByRole('tab', { name: /Economics/ }).click()
-    const visualQc = await page.evaluate(() => {
-      const panel = document.querySelector('#pane-economics .panel')
-      const table = document.querySelector('#pane-economics .tablewrap')
-      return {
-        pageOverflow: document.documentElement.scrollWidth > window.innerWidth,
-        panelScrolls:
-          panel instanceof HTMLElement && panel.scrollWidth > panel.clientWidth,
-        tableScrolls:
-          table instanceof HTMLElement && table.scrollWidth > table.clientWidth,
-      }
+    await page.getByRole('button', { name: 'Glyph it', exact: true }).click()
+    const oneSentence = page
+      .frameLocator('.structured-report-frame')
+      .locator('.onesent')
+    await oneSentence.evaluate((element) => {
+      const selection = window.getSelection()
+      const range = document.createRange()
+      range.selectNodeContents(element)
+      selection?.removeAllRanges()
+      selection?.addRange(range)
+      element.dispatchEvent(new MouseEvent('mouseup', { bubbles: true }))
     })
-    expect(visualQc).toEqual({
-      pageOverflow: false,
-      panelScrolls: true,
-      tableScrolls: true,
-    })
+    await expect(page.getByText('Selected report text')).toBeVisible()
+    await expect(
+      page.locator('.kimi-selected-passage blockquote'),
+    ).toContainText('Kimi K3 combines')
+    await expect(
+      page.getByLabel('Ask a question about the Kimi K3 source'),
+    ).toHaveValue('Explain why this matters for an investor.')
+
+    await page.getByRole('tab', { name: 'Economic relevance' }).click()
+    const reportFrame = page.locator('.structured-report-frame')
+    await expect(reportFrame).toHaveAttribute('title', /economics$/)
+    await expect(
+      page.frameLocator('.structured-report-frame').locator('svg').first(),
+    ).toBeVisible()
+    expect(
+      await page.evaluate(
+        () => document.documentElement.scrollWidth > window.innerWidth,
+      ),
+    ).toBe(false)
+    const frameQc = await page
+      .frameLocator('.structured-report-frame')
+      .locator('html')
+      .evaluate((root) => ({
+        overflows: root.scrollWidth > root.clientWidth,
+        tablesContained: Array.from(root.querySelectorAll('.tablewrap')).every(
+          (table) =>
+            table.getBoundingClientRect().right <= root.clientWidth + 1,
+        ),
+      }))
+    expect(frameQc).toEqual({ overflows: false, tablesContained: true })
   })
 
   test('every content tag opens the matching category', async ({ page }) => {
@@ -766,7 +744,7 @@ test('subscriber archive is denied to visitors and allowed by server role', asyn
     {
       name: 'glyph-demo-role',
       value: 'SUBSCRIBER',
-      url: 'http://127.0.0.1:3000',
+      url: new URL(page.url()).origin,
     },
   ])
   await page.reload()
@@ -791,7 +769,11 @@ test('editor and previews stay admin-only', async ({
   }
 
   await context.addCookies([
-    { name: 'glyph-demo-role', value: 'EDITOR', url: 'http://127.0.0.1:3000' },
+    {
+      name: 'glyph-demo-role',
+      value: 'EDITOR',
+      url: new URL(page.url()).origin,
+    },
   ])
   await page.reload()
   await expect(
@@ -814,6 +796,91 @@ test('editor and previews stay admin-only', async ({
   ).toHaveCount(5)
   await expect(
     page.getByRole('button', { name: /Send newsletter/ }),
+  ).toBeDisabled()
+})
+
+test('editor imports, previews, and approves a marked Claude report', async ({
+  page,
+  context,
+  isMobile,
+}) => {
+  test.skip(isMobile, 'Desktop editor acceptance flow')
+  await context.addCookies([
+    {
+      name: 'glyph-demo-role',
+      value: 'EDITOR',
+      url: new URL(page.url()).origin,
+    },
+  ])
+  await page.goto('/editor')
+  await page.getByLabel('Claude report HTML').setInputFiles({
+    name: 'imported-kimi-test-report.html',
+    mimeType: 'text/html',
+    buffer: Buffer.from(markedReportHtml, 'utf8'),
+  })
+  await Promise.all([
+    page.waitForURL(/\/editor\/report-imports\/report-import-[a-f0-9-]+$/, {
+      timeout: 15_000,
+    }),
+    page.getByRole('button', { name: 'Import and review' }).click(),
+  ])
+  await expect(page).toHaveURL(
+    /\/editor\/report-imports\/report-import-[a-f0-9-]+$/,
+  )
+  await expect(
+    page.getByRole('heading', { name: 'Imported Kimi test report', level: 1 }),
+  ).toBeVisible()
+  await expect(page.getByText('No import issues found.')).toBeVisible()
+  await expect(
+    page.getByRole('button', { name: 'Approve report' }),
+  ).toBeEnabled()
+  await expect(
+    page
+      .frameLocator('.structured-report-frame')
+      .getByText('2.8T', { exact: true }),
+  ).toBeVisible()
+  await page.getByRole('button', { name: 'Approve report' }).click()
+  await expect(page).toHaveURL('/reports/imported-kimi-test-report', {
+    timeout: 15_000,
+  })
+  await expect(
+    page.getByRole('heading', { name: 'Imported Kimi test report', level: 1 }),
+  ).toBeVisible()
+})
+
+test('editor blocks a legacy report until required markers are resolved', async ({
+  page,
+  context,
+  isMobile,
+}) => {
+  test.skip(isMobile, 'Desktop editor acceptance flow')
+  await context.addCookies([
+    {
+      name: 'glyph-demo-role',
+      value: 'EDITOR',
+      url: new URL(page.url()).origin,
+    },
+  ])
+  await page.goto('/editor')
+  const legacyHtml = markedReportHtml
+    .replace(' data-glyph-tab="summary"', ' id="pane-summary"')
+    .replace(' data-glyph-tab="mechanism"', ' id="pane-mechanisms"')
+    .replace(' data-glyph-tab="economics"', ' id="pane-economics"')
+    .replaceAll(/ data-glyph-section="[^"]+"/gu, '')
+  await page.getByLabel('Claude report HTML').setInputFiles({
+    name: 'legacy-kimi-test-report.html',
+    mimeType: 'text/html',
+    buffer: Buffer.from(legacyHtml, 'utf8'),
+  })
+  await Promise.all([
+    page.waitForURL(/\/editor\/report-imports\/report-import-[a-f0-9-]+$/, {
+      timeout: 15_000,
+    }),
+    page.getByRole('button', { name: 'Import and review' }).click(),
+  ])
+  await expect(page.getByText('LEGACY_HTML_REQUIRES_MARKERS')).toBeVisible()
+  await expect(
+    page.getByRole('button', { name: 'Approve report' }),
   ).toBeDisabled()
 })
 

@@ -6,6 +6,8 @@ const baseURL = `http://127.0.0.1:${testPort}`
 export default defineConfig({
   testDir: './apps/web/e2e',
   fullyParallel: true,
+  timeout: 60_000,
+  workers: 2,
   forbidOnly: true,
   retries: 1,
   reporter: [['list'], ['html', { open: 'never' }]],

@@ -124,7 +124,7 @@ export default function PublicLandingPage(): React.JSX.Element {
 
           <Link
             className="public-product-frame"
-            href="/reports/kimi-k3/report.html"
+            href="/reports/kimi-k3"
             aria-label="Open the Kimi K3 report"
           >
             <span className="public-browser-bar" aria-hidden="true">
@@ -217,10 +217,7 @@ export default function PublicLandingPage(): React.JSX.Element {
               Enter Glyph
               <ArrowRight aria-hidden="true" size={18} strokeWidth={1.8} />
             </Link>
-            <Link
-              className="public-secondary-cta"
-              href="/reports/kimi-k3/report.html"
-            >
+            <Link className="public-secondary-cta" href="/reports/kimi-k3">
               Read the Kimi K3 report
             </Link>
           </div>

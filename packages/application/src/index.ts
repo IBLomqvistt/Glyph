@@ -12,6 +12,8 @@ import {
   type PipelineStage,
   type QuestionAnswer,
   type Report,
+  type ReportImportDiagnostic,
+  type ReportPackage,
   type ReportSection,
   type UserProfile,
   type VisualSpec,
@@ -35,6 +37,102 @@ export interface PaperRepository {
 
 export interface ReportRepository {
   getEditionBySlug(slug: string): Promise<GlyphEdition | null>
+}
+
+export type ReportImportDraft = {
+  id: Id
+  originalFileName: string
+  htmlSha256: string
+  reportPackage: ReportPackage
+  createdAt: string
+  reviewStatus: 'PENDING' | 'APPROVED' | 'REJECTED'
+  reviewedAt: string | null
+  reviewerId: Id | null
+  rejectionReason: string | null
+}
+
+export interface ReportImportStore {
+  save(draft: ReportImportDraft): Promise<void>
+  get(id: Id): Promise<ReportImportDraft | null>
+  list(): Promise<ReportImportDraft[]>
+  findApprovedBySlug(slug: string): Promise<ReportImportDraft | null>
+  approve(input: {
+    id: Id
+    reviewerId: Id
+    approvedAt: string
+  }): Promise<ReportImportDraft>
+  reject(input: {
+    id: Id
+    reviewerId: Id
+    rejectedAt: string
+    reason: string
+  }): Promise<ReportImportDraft>
+}
+
+export type ReportImportResult = {
+  draftId: Id
+  previewUrl: string
+  blockers: ReportImportDiagnostic[]
+  warnings: ReportImportDiagnostic[]
+  extractedAssetSummary: {
+    inlineSvgCount: number
+    tableCount: number
+    unresolvedExternalAssetCount: number
+  }
+}
+
+export type QuestionQuotaReservation = {
+  id: Id
+  reportSlug: string
+  sessionId: string
+  ipAddress: string
+  day: string
+  reservedAt: string
+}
+
+export type QuestionQuotaDecision =
+  | { allowed: true; reservation: QuestionQuotaReservation }
+  | {
+      allowed: false
+      reason: 'SESSION_DAILY_LIMIT' | 'IP_DAILY_LIMIT' | 'REQUEST_IN_PROGRESS'
+      retryAfterSeconds: number
+    }
+
+export interface QuestionQuotaGateway {
+  reserve(input: {
+    reportSlug: string
+    sessionId: string
+    ipAddress: string
+    now: Date
+  }): Promise<QuestionQuotaDecision>
+  complete(reservationId: Id): Promise<void>
+  release(reservationId: Id): Promise<void>
+}
+
+export type QuestionGenerationAuditRecord = {
+  id: Id
+  reportSlug: string
+  sessionId: string
+  ipAddress: string
+  model: string
+  promptVersion: string
+  outputSchemaVersion: number
+  sourcePaperVersionId: Id
+  generatedAt: string
+  outcome:
+    | 'ANSWER'
+    | 'INSUFFICIENT_EVIDENCE'
+    | 'QUOTA_EXCEEDED'
+    | 'LIVE_AI_UNAVAILABLE'
+    | 'FAILED'
+  evidenceIds: Id[]
+  latencyMs: number
+  inputTokens: number | null
+  outputTokens: number | null
+}
+
+export interface QuestionGenerationAuditStore {
+  record(entry: QuestionGenerationAuditRecord): Promise<void>
 }
 
 export interface ConceptRepository {

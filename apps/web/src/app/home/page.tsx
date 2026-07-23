@@ -5,14 +5,26 @@ import { featuredReport } from '@/lib/featured-report'
 
 const contentTags = featuredReport.topicLabels
 
-const editionDate = new Intl.DateTimeFormat('en-GB', {
-  weekday: 'long',
-  day: 'numeric',
-  month: 'long',
-  timeZone: 'UTC',
-}).format(new Date(`${featuredReport.publicationDate}T00:00:00Z`))
+export const dynamic = 'force-dynamic'
 
 export default function ProductHomePage(): React.JSX.Element {
+  const now = new Date()
+  const londonDateParts = new Intl.DateTimeFormat('en-GB', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    timeZone: 'Europe/London',
+  }).formatToParts(now)
+  const datePart = (type: Intl.DateTimeFormatPartTypes): string =>
+    londonDateParts.find((part) => part.type === type)?.value ?? ''
+  const editionDateTime = `${datePart('year')}-${datePart('month')}-${datePart('day')}`
+  const editionDate = new Intl.DateTimeFormat('en-GB', {
+    weekday: 'long',
+    day: 'numeric',
+    month: 'long',
+    timeZone: 'Europe/London',
+  }).format(now)
+
   return (
     <div className="page page-wide today-home">
       <header className="today-hero">
@@ -24,7 +36,7 @@ export default function ProductHomePage(): React.JSX.Element {
             browse its category.
           </p>
         </div>
-        <time className="today-date" dateTime={featuredReport.publicationDate}>
+        <time className="today-date" dateTime={editionDateTime}>
           <CalendarDays aria-hidden="true" size={18} strokeWidth={1.7} />
           <span>
             <small>Today’s edition</small>

@@ -7,7 +7,7 @@ export const featuredReport = {
   publicationDate: '2026-07-21',
   originalUrl: 'https://www.kimi.com/blog/kimi-k3',
   pdfPath: '/papers/kimi-k3-tech-blog.pdf',
-  reportPath: '/reports/kimi-k3/report.html',
+  reportPath: '/reports/kimi-k3',
   pageCount: 21,
   readingTimeMinutes: 18,
   categoryHref: '/layers/models',

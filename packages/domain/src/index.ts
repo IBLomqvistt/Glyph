@@ -464,6 +464,238 @@ export const NewsletterSchema = z.object({
 })
 export type Newsletter = z.infer<typeof NewsletterSchema>
 
+export const ReportPackageVersionSchema = z.literal(1)
+
+export const ReportPackageStatusSchema = z.enum([
+  'DRAFT',
+  'BLOCKED',
+  'APPROVED',
+])
+
+export const ReportTabIdSchema = z.enum(['summary', 'mechanism', 'economics'])
+export type ReportTabId = z.infer<typeof ReportTabIdSchema>
+
+export const ReportClaimClassificationSchema = z.enum([
+  'AUTHOR_CLAIM',
+  'INDEPENDENT_EVIDENCE',
+  'GLYPH_INTERPRETATION',
+  'INSUFFICIENT_EVIDENCE',
+])
+
+export const ReportImportDiagnosticSchema = z.object({
+  severity: z.enum(['BLOCKER', 'WARNING']),
+  code: z.string().trim().min(1),
+  message: z.string().trim().min(1),
+  recordId: IdSchema.nullable(),
+})
+export type ReportImportDiagnostic = z.infer<
+  typeof ReportImportDiagnosticSchema
+>
+
+export const ReportPackageMetadataSchema = z.object({
+  title: z.string().trim().min(1),
+  description: z.string().trim().min(1),
+  provider: z.string().trim().min(1),
+  authors: z.array(z.string().trim().min(1)).min(1),
+  publicationDate: z.iso.date(),
+  readingTimeMinutes: z.number().int().positive(),
+  originalUrl: z.url().nullable(),
+  sourceTitle: z.string().trim().min(1),
+})
+
+export const ReportPackageTabSchema = z.object({
+  id: ReportTabIdSchema,
+  label: z.string().trim().min(1),
+  sectionIds: z.array(IdSchema),
+})
+
+export const ReportPackageSectionSchema = z.object({
+  id: IdSchema,
+  tabId: ReportTabIdSchema,
+  heading: z.string().trim().min(1),
+  html: z.string().trim().min(1),
+  claimIds: z.array(IdSchema),
+  conceptIds: z.array(IdSchema),
+  visualIds: z.array(IdSchema),
+  evidenceIds: z.array(IdSchema),
+})
+
+export const ReportPackageClaimSchema = z.object({
+  id: IdSchema,
+  sectionId: IdSchema,
+  text: z.string().trim().min(1),
+  classification: ReportClaimClassificationSchema,
+  material: z.boolean(),
+  evidenceIds: z.array(IdSchema),
+})
+
+export const ReportPackageConceptSchema = z.object({
+  id: IdSchema,
+  sectionId: IdSchema,
+  name: z.string().trim().min(1),
+  definition: z.string().trim().min(1),
+})
+
+export const ReportPackageVisualSchema = z.object({
+  id: IdSchema,
+  sectionId: IdSchema,
+  kind: z.enum(['INLINE_SVG', 'TABLE']),
+  html: z.string().trim().min(1),
+  caption: z.string().trim().min(1).nullable(),
+  evidenceIds: z.array(IdSchema),
+})
+
+export const ReportPackageSourceSchema = z.object({
+  id: IdSchema,
+  label: z.string().trim().min(1),
+  url: z.url().nullable(),
+})
+
+export const ReportPackageEvidenceReferenceSchema = z.object({
+  id: IdSchema,
+  paperVersionId: IdSchema,
+  pageNumber: z.number().int().positive(),
+  exactText: z.string().trim().min(1),
+})
+
+export const ReportPackageSchema = z
+  .object({
+    packageVersion: ReportPackageVersionSchema,
+    id: IdSchema,
+    slug: z.string().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/),
+    paperVersionId: IdSchema,
+    status: ReportPackageStatusSchema,
+    metadata: ReportPackageMetadataSchema,
+    themeCss: z.string(),
+    tabs: z.array(ReportPackageTabSchema).length(3),
+    sections: z.array(ReportPackageSectionSchema),
+    claims: z.array(ReportPackageClaimSchema),
+    concepts: z.array(ReportPackageConceptSchema),
+    visuals: z.array(ReportPackageVisualSchema),
+    sources: z.array(ReportPackageSourceSchema),
+    evidenceReferences: z.array(ReportPackageEvidenceReferenceSchema),
+    diagnostics: z.array(ReportImportDiagnosticSchema),
+    importedAt: z.iso.datetime(),
+    approvedAt: z.iso.datetime().nullable(),
+  })
+  .superRefine((reportPackage, context) => {
+    const sectionIds = new Set(
+      reportPackage.sections.map((section) => section.id),
+    )
+    const evidenceIds = new Set(
+      reportPackage.evidenceReferences.map((evidence) => evidence.id),
+    )
+    const assertUnique = (
+      ids: readonly string[],
+      path: (string | number)[],
+      label: string,
+    ): void => {
+      if (new Set(ids).size !== ids.length) {
+        context.addIssue({
+          code: 'custom',
+          message: `Duplicate ${label} IDs are not allowed`,
+          path,
+        })
+      }
+    }
+
+    assertUnique(
+      reportPackage.sections.map((section) => section.id),
+      ['sections'],
+      'section',
+    )
+    assertUnique(
+      reportPackage.claims.map((claim) => claim.id),
+      ['claims'],
+      'claim',
+    )
+    assertUnique(
+      reportPackage.concepts.map((concept) => concept.id),
+      ['concepts'],
+      'concept',
+    )
+    assertUnique(
+      reportPackage.visuals.map((visual) => visual.id),
+      ['visuals'],
+      'visual',
+    )
+    assertUnique(
+      reportPackage.sources.map((source) => source.id),
+      ['sources'],
+      'source',
+    )
+    assertUnique(
+      reportPackage.evidenceReferences.map((evidence) => evidence.id),
+      ['evidenceReferences'],
+      'evidence',
+    )
+
+    for (const tab of reportPackage.tabs) {
+      for (const sectionId of tab.sectionIds) {
+        if (!sectionIds.has(sectionId)) {
+          context.addIssue({
+            code: 'custom',
+            message: `Tab ${tab.id} references unknown section ${sectionId}`,
+            path: ['tabs'],
+          })
+        }
+      }
+    }
+    for (const claim of reportPackage.claims) {
+      if (!sectionIds.has(claim.sectionId)) {
+        context.addIssue({
+          code: 'custom',
+          message: `Claim ${claim.id} references an unknown section`,
+          path: ['claims'],
+        })
+      }
+      if (
+        reportPackage.status === 'APPROVED' &&
+        claim.material &&
+        claim.classification !== 'INSUFFICIENT_EVIDENCE' &&
+        claim.evidenceIds.length === 0
+      ) {
+        context.addIssue({
+          code: 'custom',
+          message: `Material claim ${claim.id} requires evidence`,
+          path: ['claims'],
+        })
+      }
+      for (const evidenceId of claim.evidenceIds) {
+        if (!evidenceIds.has(evidenceId)) {
+          context.addIssue({
+            code: 'custom',
+            message: `Claim ${claim.id} references unknown evidence ${evidenceId}`,
+            path: ['claims'],
+          })
+        }
+      }
+    }
+    if (
+      reportPackage.status === 'APPROVED' &&
+      reportPackage.diagnostics.some(
+        (diagnostic) => diagnostic.severity === 'BLOCKER',
+      )
+    ) {
+      context.addIssue({
+        code: 'custom',
+        message: 'A blocked report package cannot be approved',
+        path: ['status'],
+      })
+    }
+    if (
+      reportPackage.status === 'APPROVED' &&
+      reportPackage.tabs.some((tab) => tab.sectionIds.length === 0)
+    ) {
+      context.addIssue({
+        code: 'custom',
+        message: 'Every approved report tab requires content',
+        path: ['tabs'],
+      })
+    }
+  })
+export type ReportPackage = z.infer<typeof ReportPackageSchema>
+
 export type PublicationBlocker = {
   code:
     | 'MATERIAL_CLAIM_WITHOUT_EVIDENCE'

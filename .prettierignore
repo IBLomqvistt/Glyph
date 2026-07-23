@@ -8,4 +8,5 @@ test-results
 work
 pnpm-lock.yaml
 fixtures/kimi-k3/*.html
-apps/web/public/reports/kimi-k3/report.html
+# Preserve reviewed Claude-authored SVG geometry and presentation exactly.
+apps/web/report-sources/*.html

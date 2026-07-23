@@ -10,6 +10,7 @@ import {
 } from 'lucide-react'
 import { Badge, Button, Card } from '@glyph/ui'
 import { edition } from '@/lib/edition'
+import { ReportImportUpload } from '@/components/report-import-upload'
 import { DemoAuthGateway } from '@/server/demo-auth'
 import {
   acceptSubmissionAction,
@@ -117,6 +118,21 @@ export default async function EditorPage(): Promise<React.JSX.Element> {
             </span>
           </div>
         </div>
+      </Card>
+
+      <Card className="report-import-card">
+        <div className="card-heading-row">
+          <div>
+            <span className="eyebrow">Report pipeline</span>
+            <h2>Import Claude HTML</h2>
+            <p>
+              Convert marked HTML into a validated draft. Evidence blockers must
+              be resolved before approval.
+            </p>
+          </div>
+          <Badge tone="neutral">Local V1</Badge>
+        </div>
+        <ReportImportUpload />
       </Card>
 
       <Card className="context-composer">
